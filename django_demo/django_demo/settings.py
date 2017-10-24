@@ -24,7 +24,7 @@ SECRET_KEY = '-f1vp9ggm!2g#n8b-x49q^e5jl3-b6+c_v+d#13evoe^s#rj^x'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', r'/.*/chernihv.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'chernihv.pythonanywhere.com']
 
 # Application definition
 
