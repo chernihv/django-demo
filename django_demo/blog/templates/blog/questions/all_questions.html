@@ -7,7 +7,7 @@
 <body>
 {% if questions is not None %}
     {% for question in questions %}
-        <a href="/question/{{ question.id }}"><b> {{ question.question_text }} </b></a><br>
+        <a href="{% url 'question_detail' question.id %}"><b> {{ question.question_text }} </b></a><br>
     {% endfor %}
 {% else %}
     Вопросов нету

@@ -5,12 +5,12 @@
     <title>Question Detail</title>
 </head>
 <body>
-<a href="/question/">Go Back</a><br>
+<a href="{% url 'question' %}">Go Back</a><br>
 Question Id: {{ question.id }} <br>
 Question Text: {{ question.question_text }} <br>
 Choices: <br>
 {% for choice in choices %}
-    <a href="/question/{{ question.id }}/vote/{{ choice.id }}">{{ choice.choice_text }}</a> votes: {{ choice.votes }}
+    <a href="{% url 'choice_vote' question.id choice.id %}">{{ choice.choice_text }}</a> votes: {{ choice.votes }}
     <br>
 {% endfor %}
 </body>
