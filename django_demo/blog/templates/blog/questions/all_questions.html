@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All Questions List</title>
+</head>
+<body>
+{% if questions is not None %}
+    {% for question in questions %}
+        <a href="/question/{{ question.id }}"><b> {{ question.question_text }} </b></a><br>
+    {% endfor %}
+{% else %}
+    Вопросов нету
+{% endif %}
+</body>
+</html>
