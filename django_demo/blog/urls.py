@@ -8,5 +8,5 @@ urlpatterns = [
     url(r'^question/$', all_question, name='question'),
     url(r'^question/(?P<question_id>[0-9]+)/$', detail, name='question_detail'),
     url(r'^question/(?P<question_id>[0-9]+)/results/$', result, name='vote_result'),
-    url(r'^question/(?P<question_id>[0-9]+)/vote/(?P<choice_id>[0-9])+/$', vote, name='choice_vote'),
+    url(r'^question/(?P<question_id>[0-9]+)/vote/$', vote, name='choice_vote'),
 ]

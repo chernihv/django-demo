@@ -1,6 +1,7 @@
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from ..models.questions import Questions, Choice
 from django.shortcuts import render, get_object_or_404
+from django.core.urlresolvers import reverse
 
 
 def all_question(request: HttpRequest):
@@ -15,11 +16,20 @@ def detail(request: HttpRequest, question_id: int):
 
 
 def result(request: HttpRequest, question_id: int):
-    return HttpResponse('Result questions: {q_id}'.format(q_id=question_id))
+    question = get_object_or_404(Questions, id=question_id)
+    return render(request, 'blog/questions/vote_results.html', {'question': question})
 
 
-def vote(request: HttpRequest, question_id: int, choice_id: int):
-    choice = Choice.objects.get(id=choice_id)
-    choice.votes += 1
-    choice.save()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+def vote(request: HttpRequest, question_id: int):
+    question = get_object_or_404(Questions, id=question_id)
+    try:
+        selected_choice = question.choice_set.get(id=request.POST['choice'])
+    except (KeyError, Choice.DoesNotExist):
+        return render(request, 'blog/questions/question_detail.html', {
+            'question': question,
+            'error_message': 'Вы не выбрали пункт',
+        })
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+        return HttpResponseRedirect(reverse('blog:vote_result', args=(question_id,)))

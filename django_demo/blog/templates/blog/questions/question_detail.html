@@ -9,9 +9,14 @@
 Question Id: {{ question.id }} <br>
 Question Text: {{ question.question_text }} <br>
 Choices: <br>
-{% for choice in choices %}
-    <a href="{% url 'blog:choice_vote' question.id choice.id %}">{{ choice.choice_text }}</a> votes: {{ choice.votes }}
-    <br>
-{% endfor %}
+{% if error_message %} <strong>{{ error_message }}</strong> {% endif %}
+<form action="{% url 'blog:choice_vote' question.id %}" method="post">
+    {% csrf_token %}
+    {% for choice in choices %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+    {% endfor %}
+    <input type="submit" value="Vote">
+</form>
 </body>
 </html>
