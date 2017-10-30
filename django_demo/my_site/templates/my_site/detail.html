@@ -5,14 +5,14 @@
     <title>Question Detail</title>
 </head>
 <body>
-<a href="{% url 'blog:question' %}">Go Back</a><br>
+<a href="{% url 'my_site:index' %}">Go Back</a><br>
 Question Id: {{ question.id }} <br>
 Question Text: {{ question.question_text }} <br>
 Choices: <br>
 {% if error_message %} <strong>{{ error_message }}</strong> {% endif %}
-<form action="{% url 'blog:choice_vote' question.id %}" method="post">
+<form action="{% url 'my_site:vote' question.id %}" method="post">
     {% csrf_token %}
-    {% for choice in choices %}
+    {% for choice in question.choice_set.all %}
         <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
         <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
     {% endfor %}

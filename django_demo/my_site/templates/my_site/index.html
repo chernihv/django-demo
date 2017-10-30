@@ -5,9 +5,9 @@
     <title>All Questions List</title>
 </head>
 <body>
-{% if questions is not None %}
-    {% for question in questions %}
-        <a href="{% url 'blog:question_detail' question.id %}"><b> {{ question.question_text }} </b></a><br>
+{% if latest_question_list is not None %}
+    {% for question in latest_question_list %}
+        <a href="{% url 'my_site:detail' question.id %}"><b> {{ question.question_text }} </b></a><br>
     {% endfor %}
 {% else %}
     Вопросов нету
