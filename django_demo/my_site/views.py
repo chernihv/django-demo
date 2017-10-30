@@ -22,6 +22,9 @@ class DetailView(generic.DetailView):
     model = Question
     template_name = 'my_site/detail.html'
 
+    def get_queryset(self):
+        return Question.objects.get(pub_date__lte=timezone.now())
+
 
 class ResultsView(generic.DetailView):
     model = Question
