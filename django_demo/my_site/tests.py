@@ -10,6 +10,18 @@ def create_question(question_text: str, days: int):
     return Question.objects.create(question_text=question_text, pub_date=time)
 
 
+class QuestionIndexDetailTests(TestCase):
+    def test_detail_view_with_a_future_question(self):
+        future_question = create_question(question_text='Future Question', days=5)
+        response = self.client.get(reverse('my_site:detail', args=[future_question.id]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_detail_view_with_a_old_question(self):
+        old_question = create_question('Old Question', days=-1)
+        response = self.client.get(reverse('my_site:detail', args=[old_question.id]))
+        self.assertEqual(response.status_code, 200)
+
+
 class QuestionViewTests(TestCase):
     def test_index_view_with_no_questions(self):
         response = self.client.get(reverse('my_site:index'))
