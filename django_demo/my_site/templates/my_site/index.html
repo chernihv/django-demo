@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>All Questions List</title>
+    {% load staticfiles %}
+    <link type="text/css" rel="stylesheet" href="{% static 'my_site/main.css' %}"/>
+    <script type="text/javascript" src="{% static 'my_site/js/main.js' %}"></script>
 </head>
 <body>
 {% if latest_question_list is not None %}
