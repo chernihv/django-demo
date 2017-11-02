@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Question Detail</title>
-</head>
-<body>
+{% extends 'my_site/index.html' %}
+{% block title %}Detail {{ question.id }}{% endblock %}
+{% block content %}
 <a href="{% url 'my_site:index' %}">Go Back</a><br>
 Question Id: {{ question.id }} <br>
 Question Text: {{ question.question_text }} <br>
@@ -18,5 +14,4 @@ Choices: <br>
     {% endfor %}
     <input type="submit" value="Vote">
 </form>
-</body>
-</html>
+{% endblock %}

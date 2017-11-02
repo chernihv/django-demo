@@ -8,7 +8,7 @@ from .models import Choice, Question
 
 
 class IndexView(generic.ListView):
-    template_name = 'my_site/index.html'
+    template_name = 'my_site/questions.html'
     context_object_name = 'latest_question_list'
 
     def get_queryset(self):
