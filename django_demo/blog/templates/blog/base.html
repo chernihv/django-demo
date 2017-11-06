@@ -1,0 +1,74 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="{% block html_lang %}ru{% endblock html_lang %}">
+
+<head>
+    {% block head %}
+        <meta charset="{% block charset %}UTF-8{% endblock charset %}">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="{% block page_description %}{% endblock %}">
+        <meta name="author" content="{% block page_author %}{% endblock page_author %}">
+        <title>{% block page_title %}Main Page{% endblock %}</title>
+        <link type="text/css" rel="stylesheet" href="{% static 'blog/css/application.css' %}"/>
+        {% block stylesheets %}
+        {% endblock stylesheets %}
+        <script type="text/javascript" src="{% static 'blog/js/application.js' %}"></script>
+        {% block javascripts %}
+        {% endblock javascripts %}
+    {% endblock head %}
+</head>
+
+<body>
+{% block body %}
+
+    {% block page_header %}
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">{% block nav_project_name %}Blog{% endblock nav_project_name %}</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        {% block nav_buttons %}
+                            {% block nav_buttons_main %}
+                                <li class="active"><a href="#">Home</a></li>
+                                <li><a href="#about">About</a></li>
+                                <li><a href="#contact">Contact</a></li>
+                            {% endblock nav_buttons_main %}
+                            {% block nav_buttons_custom %}
+                            {% endblock nav_buttons_custom %}
+                        {% endblock nav_buttons %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    {% endblock page_header %}
+
+    {% block page_body %}
+        <div class="container">
+            <div class="starter-template">
+                {% block page_body_content %}
+                    <h1>Hello World</h1>
+                {% endblock page_body_content %}
+            </div>
+        </div>
+    {% endblock page_body %}
+
+    {% block bootstrap_cdn %}
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    {% endblock bootstrap_cdn %}
+
+{% endblock body %}
+</body>
+
+</html>
