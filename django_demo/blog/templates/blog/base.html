@@ -13,9 +13,6 @@
         <link type="text/css" rel="stylesheet" href="{% static 'blog/css/application.css' %}"/>
         {% block stylesheets %}
         {% endblock stylesheets %}
-        <script type="text/javascript" src="{% static 'blog/js/application.js' %}"></script>
-        {% block javascripts %}
-        {% endblock javascripts %}
     {% endblock head %}
 </head>
 
@@ -33,13 +30,12 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">{% block nav_project_name %}Blog{% endblock nav_project_name %}</a>
+                    <a class="navbar-brand" href="">{% block nav_project_name %}Blog{% endblock nav_project_name %}</a>
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
                         {% block nav_buttons %}
                             {% block nav_buttons_main %}
-                                <li class="active"><a href="#">Home</a></li>
                                 <li><a href="#about">About</a></li>
                                 <li><a href="#contact">Contact</a></li>
                             {% endblock nav_buttons_main %}
@@ -67,6 +63,9 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     {% endblock bootstrap_cdn %}
+    <script type="text/javascript" src="{% static 'blog/js/application.js' %}"></script>
+    {% block javascripts %}
+    {% endblock javascripts %}
 
 {% endblock body %}
 </body>

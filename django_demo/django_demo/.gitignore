@@ -1,2 +1,2 @@
-hidden_settings.py
+secret_key.py
 !.gitignore
