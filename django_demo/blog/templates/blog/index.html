@@ -1,1 +1,20 @@
 {% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% block page_content_body %}
+
+    <div class="col-md-12 blog-post">
+        <div class="post-image">
+            <img src="{% static 'blog/images/blog/1.jpg' %}" alt="">
+        </div>
+        <div class="post-title">
+            <a href="single.html"><h1>Post title link</h1></a>
+        </div>
+        <div class="post-info">
+            <span>November 23, 2016 / by <a href="#" target="_blank">User Name</a></span>
+        </div>
+        <p>Post body text</p>
+        <a href="single.html"
+           class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+    </div>
+
+{% endblock page_content_body %}

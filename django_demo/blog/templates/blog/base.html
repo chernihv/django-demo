@@ -31,167 +31,90 @@
             {% block custom_stylesheets %}
             {% endblock custom_stylesheets %}
         {% endblock all_stylesheets %}
+
     {% endblock head %}
 </head>
 
 <body>
 {% block body %}
 
-    {% block page_preloader %}
+    {% block body_utils_preloader %}
         <div class="preloader">
             <div class="rounder"></div>
         </div>
-    {% endblock page_preloader %}
+    {% endblock body_utils_preloader %}
 
     <div id="main">
-        {% block page_container %}
-            <div class="container">
-                <div class="row">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 page-body">
+                    <div class="row">
 
-                    <div class="col-md-12 page-body">
-                        <div class="row">
+                        {% block content_header %}
+                            <div class="sub-title">
+                                <h2>{% block content_header_title %}ChernihV Blog{% endblock content_header_title %}</h2>
+                                {% block content_header_icon %}
+                                    <a href="{% url 'blog:contact' %}"><i class="icon-envelope"></i></a>
+                                {% endblock content_header_icon %}
+                            </div>
+                        {% endblock content_header %}
 
-                            {% block content_header %}
-                                <div class="sub-title">
-                                    <h2>{% block content_header_title %}My Blog{% endblock content_header_title %}</h2>
-                                    {% block content_header_icon %}
-                                        <a href="contact.html"><i class="icon-envelope"></i></a>
-                                    {% endblock content_header_icon %}
-                                </div>
-                            {% endblock content_header %}
-
-                            <div class="col-md-12 content-page">
-
-                                {% block page_content %}
-
-                                {% endblock page_content %}
-                                <!-- Blog Post Start -->
-                                <div class="col-md-12 blog-post">
-                                    <div class="post-title">
-                                        <a href="single.html"><h1>How to make your company website based on
-                                            bootstrap
-                                            framework on localhost?</h1></a>
-                                    </div>
-                                    <div class="post-info">
-                                            <span>November 23, 2016 / by <a href="#"
-                                                                            target="_blank">Alex Parker</a></span>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
-                                        ratione
-                                        similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
-                                        corporis
-                                        dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
-                                        ipsum
-                                        dolor
-                                        sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
-                                    <a href="single.html"
-                                       class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
-                                </div>
-                                <!-- Blog Post End -->
-
-
-                                <!-- Blog Post Start -->
-                                <div class="col-md-12 blog-post">
-                                    <div class="post-title">
-                                        <a href="single.html"><h1>How to design elegant e-mail newsletter in html
-                                            for
-                                            wish
-                                            christmas to your subscribers?</h1></a>
-                                    </div>
-                                    <div class="post-info">
-                                            <span>November 23, 2016 / by <a href="#"
-                                                                            target="_blank">Alex Parker</a></span>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
-                                        ratione
-                                        similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
-                                        corporis
-                                        dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
-                                        ipsum
-                                        dolor
-                                        sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
-                                    <a href="single.html"
-                                       class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
-                                </div>
-                                <!-- Blog Post End -->
-
-                                <div class="col-md-12 blog-post">
-                                    <div class="post-image">
-                                        <img src="{% static 'blog/images/blog/1.jpg' %}" alt="">
-                                    </div>
-                                    <div class="post-title">
-                                        <a href="single.html"><h1>Make mailchimp singup form working with ajax using
-                                            jquery
-                                            plugin</h1></a>
-                                    </div>
-                                    <div class="post-info">
-                                            <span>November 23, 2016 / by <a href="#"
-                                                                            target="_blank">Alex Parker</a></span>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
-                                        ratione
-                                        similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
-                                        corporis
-                                        dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
-                                        ipsum
-                                        dolor
-                                        sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
-                                    <a href="single.html"
-                                       class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
-                                </div>
-
-                                {% block end_content_load_button %}
+                        <div class="col-md-12 content-page">
+                            {% block page_content %}
+                                {% block page_content_body %}
+                                {% endblock page_content_body %}
+                                {% block page_content_footer %}
                                     <div class="col-md-12 text-center">
                                         <a href="javascript:void(0)" id="load-more-post"
                                            class="load-more-button">Load</a>
                                         <div id="post-end-message"></div>
                                     </div>
-                                {% endblock end_content_load_button %}
-
-                            </div>
-
+                                {% endblock page_content_footer %}
+                            {% endblock page_content %}
                         </div>
-
-                        {% block page_footer %}
-                            <div class="col-md-12 page-body margin-top-50 footer">
-                                <footer>
-                                    <ul class="menu-link">
-                                        {% block footer_navs_button %}
-                                            <li><a href="base.html">Home</a></li>
-                                            <li><a href="about.html">About</a></li>
-                                            <li><a href="work.html">Work</a></li>
-                                            <li><a href="contact.html">Contact</a></li>
-                                        {% endblock footer_navs_button %}
-                                    </ul>
-
-                                    {% block page_copyrigth %}
-                                        <p>© Copyright 2016 DevBlog. All rights reserved</p>
-                                        <div class="uipasta-credit">Design By <a href="http://www.uipasta.com"
-                                                                                 target="_blank">UiPasta</a></div>
-                                    {% endblock page_copyrigth %}
-
-                                </footer>
-                            </div>
-                        {% endblock page_footer %}
-
                     </div>
                 </div>
+
+                {% block page_footer %}
+                    <div class="col-md-12 page-body margin-top-50 footer">
+                        <footer>
+                            <ul class="menu-link">
+                                {% block footer_navs_button %}
+                                    <li><a href="{% url 'blog:index' %}">Home</a></li>
+                                    <li><a href="{% url 'blog:contact' %}">Contact</a></li>
+                                {% endblock footer_navs_button %}
+                            </ul>
+
+                            {% block page_footer_copyrigth %}
+                                <div class="uipasta-credit">Developed by <a href="https://vk.com/id209493413">Черных
+                                    Василий</a>
+                                </div>
+                                <a href="mailto:vasyachemax@yandex.ru">vasyachemax@yandex.ru</a>
+                            {% endblock page_footer_copyrigth %}
+
+                        </footer>
+                    </div>
+                {% endblock page_footer %}
+
             </div>
-        {% endblock page_container %}
+        </div>
     </div>
 
-    {% block scroll_to_top_arrow %}
+    {% block body_utils_arrow_to_top %}
         <a href="#" class="scroll-to-top"><i class="fa fa-long-arrow-up"></i></a>
-    {% endblock scroll_to_top_arrow %}
+    {% endblock body_utils_arrow_to_top %}
 
-    {% block main_javascripts %}
-        <script type="text/javascript" src="{% static 'blog/js/jquery.min.js' %}"></script>
-        <script type="text/javascript" src="{% static 'blog/js/plugin.js' %}"></script>
-        <script type="text/javascript" src="{% static 'blog/js/scripts.js' %}"></script>
-    {% endblock main_javascripts %}
-    {% block custom_javascripts %}
-    {% endblock custom_javascripts %}
+    {% block all_javascripts %}
+        {% block main_javascripts %}
+            <script type="text/javascript" src="{% static 'blog/js/jquery.min.js' %}"></script>
+            <script type="text/javascript" src="{% static 'blog/js/plugin.js' %}"></script>
+            <script type="text/javascript" src="{% static 'blog/js/scripts.js' %}"></script>
+        {% endblock main_javascripts %}
+        {% block custom_javascripts %}
+        {% endblock custom_javascripts %}
+    {% endblock all_javascripts %}
 
 {% endblock body %}
 </body>
+
 </html>
