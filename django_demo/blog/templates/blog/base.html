@@ -51,16 +51,20 @@
                     <div class="col-md-12 page-body">
                         <div class="row">
 
-
-                            <div class="sub-title">
-                                <h2>My Blog</h2>
-                                <a href="contact.html"><i class="icon-envelope"></i></a>
-                            </div>
-
+                            {% block content_header %}
+                                <div class="sub-title">
+                                    <h2>{% block content_header_title %}My Blog{% endblock content_header_title %}</h2>
+                                    {% block content_header_icon %}
+                                        <a href="contact.html"><i class="icon-envelope"></i></a>
+                                    {% endblock content_header_icon %}
+                                </div>
+                            {% endblock content_header %}
 
                             <div class="col-md-12 content-page">
 
+                                {% block page_content %}
 
+                                {% endblock page_content %}
                                 <!-- Blog Post Start -->
                                 <div class="col-md-12 blog-post">
                                     <div class="post-title">
@@ -111,8 +115,6 @@
                                 </div>
                                 <!-- Blog Post End -->
 
-
-                                <!-- Blog Post Start -->
                                 <div class="col-md-12 blog-post">
                                     <div class="post-image">
                                         <img src="{% static 'blog/images/blog/1.jpg' %}" alt="">
@@ -137,137 +139,17 @@
                                     <a href="single.html"
                                        class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
                                 </div>
-                                <!-- Blog Post End -->
 
-
-                                <!-- Blog Post Start -->
-                                <div class="col-md-12 blog-post">
-                                    <div class="post-title">
-                                        <a href="single.html"><h1>Develop a custom wordpress membership plugin from
-                                            scratch
-                                            using framework on localhost - part 1</h1></a>
+                                {% block end_content_load_button %}
+                                    <div class="col-md-12 text-center">
+                                        <a href="javascript:void(0)" id="load-more-post"
+                                           class="load-more-button">Load</a>
+                                        <div id="post-end-message"></div>
                                     </div>
-                                    <div class="post-info">
-                                            <span>November 23, 2016 / by <a href="#"
-                                                                            target="_blank">Alex Parker</a></span>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
-                                        ratione
-                                        similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
-                                        corporis
-                                        dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
-                                        ipsum
-                                        dolor
-                                        sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
-                                    <a href="single.html"
-                                       class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
-                                </div>
-                                <!-- Blog Post End -->
-
-
-                                <!-- Blog Post Start -->
-                                <div class="col-md-12 blog-post">
-                                    <div class="post-title">
-                                        <a href="single.html"><h1>How to customize a wordpress theme entirely from
-                                            scratch
-                                            using a child theme?</h1></a>
-                                    </div>
-                                    <div class="post-info">
-                                            <span>November 23, 2016 / by <a href="#"
-                                                                            target="_blank">Alex Parker</a></span>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
-                                        ratione
-                                        similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
-                                        corporis
-                                        dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
-                                        ipsum
-                                        dolor
-                                        sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
-                                    <a href="single.html"
-                                       class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
-                                </div>
-                                <!-- Blog Post End -->
-
-
-                                <!-- Blog Post Start -->
-                                <div class="col-md-12 blog-post">
-                                    <div class="post-image">
-                                        <img src="{% static 'blog/images/blog/2.jpg' %}" alt="">
-                                    </div>
-                                    <div class="post-title">
-                                        <a href="single.html"><h1>What makes wordpress a unique and highly
-                                            customizable
-                                            platform from competitors?</h1></a>
-                                    </div>
-                                    <div class="post-info">
-                                            <span>November 23, 2016 / by <a href="#"
-                                                                            target="_blank">Alex Parker</a></span>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
-                                        ratione
-                                        similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
-                                        corporis
-                                        dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
-                                        ipsum
-                                        dolor
-                                        sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
-                                    <a href="single.html"
-                                       class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
-                                </div>
-                                <!-- Blog Post End -->
-
-
-                                <!-- Blog Post Start -->
-                                <div class="col-md-12 blog-post">
-                                    <div class="post-title">
-                                        <a href="single.html"><h1>What mistakes every beginner make, when they make
-                                            website
-                                            using bootstrap?</h1></a>
-                                    </div>
-                                    <div class="post-info">
-                                            <span>November 23, 2016 / by <a href="#"
-                                                                            target="_blank">Alex Parker</a></span>
-                                    </div>
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
-                                        ratione
-                                        similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
-                                        corporis
-                                        dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
-                                        ipsum
-                                        dolor
-                                        sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
-                                    <a href="single.html"
-                                       class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
-                                </div>
-                                <!-- Blog Post End -->
-
-
-                                <div class="col-md-12 text-center">
-                                    <a href="javascript:void(0)" id="load-more-post"
-                                       class="load-more-button">Load</a>
-                                    <div id="post-end-message"></div>
-                                </div>
+                                {% endblock end_content_load_button %}
 
                             </div>
 
-
-                            {% block subscribe_form %}
-                                <div class="col-md-8 col-md-offset-2">
-                                    <form id="mc-form" method="post"
-                                          action="http://uipasta.us14.list-manage.com/subscribe/post?u=854825d502cdc101233c08a21&amp;id=86e84d44b7">
-
-                                        <div class="subscribe-form margin-top-20">
-                                            <input id="mc-email" type="email" placeholder="Email Address"
-                                                   class="text-input">
-                                            <button class="submit-btn" type="submit">Submit</button>
-                                        </div>
-                                        <p>Subscribe to my weekly newsletter</p>
-                                        <label for="mc-email" class="mc-label"></label>
-                                    </form>
-
-                                </div>
-                            {% endblock subscribe_form %}
                         </div>
 
                         {% block page_footer %}
