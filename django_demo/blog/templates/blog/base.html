@@ -1,76 +1,369 @@
 {% load staticfiles %}
 <!DOCTYPE html>
-<html lang="{% block html_lang %}ru{% endblock html_lang %}">
+<html lang="en">
 
 <head>
     {% block head %}
-        <meta charset="{% block charset %}UTF-8{% endblock charset %}">
+        <!-- Meta Tag -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="{% block page_description %}{% endblock %}">
-        <meta name="author" content="{% block page_author %}{% endblock page_author %}">
-        <title>{% block page_title %}Main Page{% endblock %}</title>
-        <link type="text/css" rel="stylesheet" href="{% static 'blog/css/application.css' %}"/>
-        {% block stylesheets %}
-        {% endblock stylesheets %}
+
+        <!-- SEO -->
+        {% block metatags %}
+            <meta name="description" content="{% block meta_description %}150 words{% endblock meta_description %}">
+            <meta name="author" content="{% block meta_author %}uipasta{% endblock meta_author %}">
+        {% endblock metatags %}
+
+        <title>{% block page_title %}ChernihV Blog{% endblock page_title %}</title>
+
+        <!-- Favicon -->
+        <link rel="shortcut icon" href="{% static 'blog/images/favicon/favicon.ico' %}">
+        <link rel="apple-touch-icon" sizes="144x144" type="image/x-icon"
+              href="{% static 'blog/images/favicon/apple-touch-icon.png' %}">
+
+        {% block main_stylesheets %}
+            <!-- All CSS Plugins -->
+            <link rel="stylesheet" type="text/css" href="{% static 'blog/css/plugin.css' %}">
+            <!-- Main CSS Stylesheet -->
+            <link rel="stylesheet" type="text/css" href="{% static 'blog/css/style.css' %}">
+            <!-- Google Web Fonts  -->
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,300,500,600,700">
+        {% endblock main_stylesheets %}
+        {% block custom_stylesheets %}
+        {% endblock custom_stylesheets %}
     {% endblock head %}
 </head>
 
 <body>
 {% block body %}
 
-    {% block page_header %}
-        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    {% block page_preloader %}
+        <div class="preloader">
+            <div class="rounder"></div>
+        </div>
+    {% endblock page_preloader %}
+
+
+    <div id="main">
+        {% block page_container %}
             <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                            data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="{% url 'blog:index' %}">{% block nav_project_name %}Blog{% endblock nav_project_name %}</a>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        {% block nav_buttons %}
-                            {% block nav_buttons_main %}
-                                <li><a href="#about">About</a></li>
-                                <li><a href="{% url 'blog:contact' %}">Contact</a></li>
-                            {% endblock nav_buttons_main %}
-                            {% block nav_buttons_custom %}
-                            {% endblock nav_buttons_custom %}
-                        {% endblock nav_buttons %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-    {% endblock page_header %}
+                <div class="row">
 
-    {% block page_body %}
-        <div class="container">
-            <div class="starter-content">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        {% block page_body_content %}
-                        {% endblock page_body_content %}
+                    <!-- About Me (Left Sidebar) Start -->
+                    <div class="col-md-3">
+                        <div class="about-fixed">
+
+                            <div class="my-pic">
+                                <img src="{% static 'blog/images/pic/my-pic.png' %}" alt="">
+                                <a href="javascript:void(0)" class="collapsed" data-target="#menu"
+                                   data-toggle="collapse"><i
+                                        class="icon-menu menu"></i></a>
+                                <div id="menu" class="collapse">
+                                    <ul class="menu-link">
+                                        <li><a href="about.html">About</a></li>
+                                        <li><a href="work.html">Work</a></li>
+                                        <li><a href="contact.html">Contact</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                            <div class="my-detail">
+
+                                <div class="white-spacing">
+                                    <h1>Alex Parker</h1>
+                                    <span>Web Developer</span>
+                                </div>
+
+                                <ul class="social-icon">
+                                    <li><a href="#" target="_blank" class="facebook"><i class="fa fa-facebook"></i></a>
+                                    </li>
+                                    <li><a href="#" target="_blank" class="twitter"><i class="fa fa-twitter"></i></a>
+                                    </li>
+                                    <li><a href="#" target="_blank" class="linkedin"><i class="fa fa-linkedin"></i></a>
+                                    </li>
+                                    <li><a href="#" target="_blank" class="github"><i class="fa fa-github"></i></a></li>
+                                </ul>
+
+                            </div>
+                        </div>
                     </div>
+                    <!-- About Me (Left Sidebar) End -->
+
+
+                    <!-- Blog Post (Right Sidebar) Start -->
+                    <div class="col-md-9">
+                        <div class="col-md-12 page-body">
+                            <div class="row">
+
+
+                                <div class="sub-title">
+                                    <h2>My Blog</h2>
+                                    <a href="contact.html"><i class="icon-envelope"></i></a>
+                                </div>
+
+
+                                <div class="col-md-12 content-page">
+
+
+                                    <!-- Blog Post Start -->
+                                    <div class="col-md-12 blog-post">
+                                        <div class="post-title">
+                                            <a href="single.html"><h1>How to make your company website based on
+                                                bootstrap
+                                                framework on localhost?</h1></a>
+                                        </div>
+                                        <div class="post-info">
+                                            <span>November 23, 2016 / by <a href="#"
+                                                                            target="_blank">Alex Parker</a></span>
+                                        </div>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
+                                            ratione
+                                            similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
+                                            corporis
+                                            dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
+                                            ipsum
+                                            dolor
+                                            sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
+                                        <a href="single.html"
+                                           class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+                                    </div>
+                                    <!-- Blog Post End -->
+
+
+                                    <!-- Blog Post Start -->
+                                    <div class="col-md-12 blog-post">
+                                        <div class="post-title">
+                                            <a href="single.html"><h1>How to design elegant e-mail newsletter in html
+                                                for
+                                                wish
+                                                christmas to your subscribers?</h1></a>
+                                        </div>
+                                        <div class="post-info">
+                                            <span>November 23, 2016 / by <a href="#"
+                                                                            target="_blank">Alex Parker</a></span>
+                                        </div>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
+                                            ratione
+                                            similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
+                                            corporis
+                                            dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
+                                            ipsum
+                                            dolor
+                                            sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
+                                        <a href="single.html"
+                                           class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+                                    </div>
+                                    <!-- Blog Post End -->
+
+
+                                    <!-- Blog Post Start -->
+                                    <div class="col-md-12 blog-post">
+                                        <div class="post-image">
+                                            <img src="{% static 'blog/images/blog/1.jpg' %}" alt="">
+                                        </div>
+                                        <div class="post-title">
+                                            <a href="single.html"><h1>Make mailchimp singup form working with ajax using
+                                                jquery
+                                                plugin</h1></a>
+                                        </div>
+                                        <div class="post-info">
+                                            <span>November 23, 2016 / by <a href="#"
+                                                                            target="_blank">Alex Parker</a></span>
+                                        </div>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
+                                            ratione
+                                            similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
+                                            corporis
+                                            dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
+                                            ipsum
+                                            dolor
+                                            sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
+                                        <a href="single.html"
+                                           class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+                                    </div>
+                                    <!-- Blog Post End -->
+
+
+                                    <!-- Blog Post Start -->
+                                    <div class="col-md-12 blog-post">
+                                        <div class="post-title">
+                                            <a href="single.html"><h1>Develop a custom wordpress membership plugin from
+                                                scratch
+                                                using framework on localhost - part 1</h1></a>
+                                        </div>
+                                        <div class="post-info">
+                                            <span>November 23, 2016 / by <a href="#"
+                                                                            target="_blank">Alex Parker</a></span>
+                                        </div>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
+                                            ratione
+                                            similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
+                                            corporis
+                                            dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
+                                            ipsum
+                                            dolor
+                                            sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
+                                        <a href="single.html"
+                                           class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+                                    </div>
+                                    <!-- Blog Post End -->
+
+
+                                    <!-- Blog Post Start -->
+                                    <div class="col-md-12 blog-post">
+                                        <div class="post-title">
+                                            <a href="single.html"><h1>How to customize a wordpress theme entirely from
+                                                scratch
+                                                using a child theme?</h1></a>
+                                        </div>
+                                        <div class="post-info">
+                                            <span>November 23, 2016 / by <a href="#"
+                                                                            target="_blank">Alex Parker</a></span>
+                                        </div>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
+                                            ratione
+                                            similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
+                                            corporis
+                                            dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
+                                            ipsum
+                                            dolor
+                                            sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
+                                        <a href="single.html"
+                                           class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+                                    </div>
+                                    <!-- Blog Post End -->
+
+
+                                    <!-- Blog Post Start -->
+                                    <div class="col-md-12 blog-post">
+                                        <div class="post-image">
+                                            <img src="{% static 'blog/images/blog/2.jpg' %}" alt="">
+                                        </div>
+                                        <div class="post-title">
+                                            <a href="single.html"><h1>What makes wordpress a unique and highly
+                                                customizable
+                                                platform from competitors?</h1></a>
+                                        </div>
+                                        <div class="post-info">
+                                            <span>November 23, 2016 / by <a href="#"
+                                                                            target="_blank">Alex Parker</a></span>
+                                        </div>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
+                                            ratione
+                                            similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
+                                            corporis
+                                            dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
+                                            ipsum
+                                            dolor
+                                            sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
+                                        <a href="single.html"
+                                           class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+                                    </div>
+                                    <!-- Blog Post End -->
+
+
+                                    <!-- Blog Post Start -->
+                                    <div class="col-md-12 blog-post">
+                                        <div class="post-title">
+                                            <a href="single.html"><h1>What mistakes every beginner make, when they make
+                                                website
+                                                using bootstrap?</h1></a>
+                                        </div>
+                                        <div class="post-info">
+                                            <span>November 23, 2016 / by <a href="#"
+                                                                            target="_blank">Alex Parker</a></span>
+                                        </div>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Molestiae ut
+                                            ratione
+                                            similique temporibus tempora dicta soluta? Qui hic, voluptatem nemo quo
+                                            corporis
+                                            dignissimos voluptatum debitis cumque fugiat mollitia quasi quod. Lorem
+                                            ipsum
+                                            dolor
+                                            sit amet, consectetur adipisicing elit. Molestiae ut ratione similique.</p>
+                                        <a href="single.html"
+                                           class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+                                    </div>
+                                    <!-- Blog Post End -->
+
+
+                                    <div class="col-md-12 text-center">
+                                        <a href="javascript:void(0)" id="load-more-post"
+                                           class="load-more-button">Load</a>
+                                        <div id="post-end-message"></div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Subscribe Form Start -->
+                            <div class="col-md-8 col-md-offset-2">
+                                <form id="mc-form" method="post"
+                                      action="http://uipasta.us14.list-manage.com/subscribe/post?u=854825d502cdc101233c08a21&amp;id=86e84d44b7">
+
+                                    <div class="subscribe-form margin-top-20">
+                                        <input id="mc-email" type="email" placeholder="Email Address"
+                                               class="text-input">
+                                        <button class="submit-btn" type="submit">Submit</button>
+                                    </div>
+                                    <p>Subscribe to my weekly newsletter</p>
+                                    <label for="mc-email" class="mc-label"></label>
+                                </form>
+
+                            </div>
+                            <!-- Subscribe Form End -->
+
+                        </div>
+
+
+                        <!-- Footer Start -->
+                        <div class="col-md-12 page-body margin-top-50 footer">
+                            <footer>
+                                <ul class="menu-link">
+                                    <li><a href="base.html">Home</a></li>
+                                    <li><a href="about.html">About</a></li>
+                                    <li><a href="work.html">Work</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+
+                                <p>© Copyright 2016 DevBlog. All rights reserved</p>
+
+
+                                <!-- UiPasta Credit Start -->
+                                <div class="uipasta-credit">Design By <a href="http://www.uipasta.com"
+                                                                         target="_blank">UiPasta</a></div>
+                                <!-- UiPasta Credit End -->
+
+
+                            </footer>
+                        </div>
+                        <!-- Footer End -->
+
+
+                    </div>
+                    <!-- Blog Post (Right Sidebar) End -->
+
                 </div>
             </div>
-        </div>
-    {% endblock page_body %}
+        {% endblock page_container %}
+    </div>
 
-    {% block bootstrap_cdn %}
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    {% endblock bootstrap_cdn %}
-    <script type="text/javascript" src="{% static 'blog/js/application.js' %}"></script>
-    {% block javascripts %}
-    {% endblock javascripts %}
+    {% block scroll_to_top_arrow %}
+        <a href="#" class="scroll-to-top"><i class="fa fa-long-arrow-up"></i></a>
+    {% endblock scroll_to_top_arrow %}
+
+    {% block main_javascripts %}
+        <script type="text/javascript" src="{% static 'blog/js/jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'blog/js/plugin.js' %}"></script>
+        <script type="text/javascript" src="{% static 'blog/js/scripts.js' %}"></script>
+    {% endblock main_javascripts %}
+    {% block custom_javascripts %}
+    {% endblock custom_javascripts %}
 
 {% endblock body %}
 </body>
-
 </html>
