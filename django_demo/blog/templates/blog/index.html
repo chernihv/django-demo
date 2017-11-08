@@ -2,19 +2,23 @@
 {% load staticfiles %}
 {% block page_content_body %}
 
-    <div class="col-md-12 blog-post">
-        <div class="post-image">
-            <img src="{% static 'blog/images/blog/1.jpg' %}" alt="">
+    {% for post in posts %}
+
+        <div class="col-md-12 blog-post">
+            <div class="post-image">
+                <img src="{% static 'blog/images/blog/1.jpg' %}" alt="">
+            </div>
+            <div class="post-title">
+                <a href="{% url 'blog:detail' post.id %}"><h1>{{ post.title }}</h1></a>
+            </div>
+            <div class="post-info">
+                <span>{{ post.created_at|date }} / by <a href="{% url 'blog:user' post.user.id %}">{{ post.user.username }}</a></span>
+            </div>
+            <p>{{ post.post_text }}</p>
+            <a href="{% url 'blog:detail' post.id %}"
+               class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
         </div>
-        <div class="post-title">
-            <a href="single.html"><h1>Post title link</h1></a>
-        </div>
-        <div class="post-info">
-            <span>November 23, 2016 / by <a href="#" target="_blank">User Name</a></span>
-        </div>
-        <p>Post body text</p>
-        <a href="single.html"
-           class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
-    </div>
+
+    {% endfor %}
 
 {% endblock page_content_body %}

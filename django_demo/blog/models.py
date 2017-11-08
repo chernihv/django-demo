@@ -11,14 +11,14 @@ class Feedback(models.Model):
 
 
 class Post(models.Model):
-    user_id = models.ForeignKey(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     post_text = models.CharField(max_length=5000)
     created_at = models.DateTimeField()
 
 
 class PostFile(models.Model):
-    post_id = models.ForeignKey(Post)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     file_name = models.CharField(max_length=150)
     file_type = models.CharField(max_length=50)
     file_description = models.CharField(max_length=150)
@@ -26,18 +26,18 @@ class PostFile(models.Model):
 
 
 class PostComment(models.Model):
-    post_id = models.ForeignKey(Post)
-    user_id = models.IntegerField()
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.IntegerField()
     comment_text = models.CharField(max_length=500)
     created_at = models.DateTimeField()
 
 
 class PostQuestion(models.Model):
-    post_id = models.ForeignKey(Post)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     question_text = models.CharField(max_length=500)
 
 
 class PostQuestionChoice(models.Model):
-    question_id = models.ForeignKey(PostQuestion)
+    question = models.ForeignKey(PostQuestion, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=150)
     choice_votes = models.IntegerField()
