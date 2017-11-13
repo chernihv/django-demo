@@ -1,8 +1,8 @@
-from django.forms import Form
-from .models import Feedback
+from django import forms
+from . import models
 
 
-class FeedbackForm(Form):
+class FeedbackForm(forms.ModelForm):
     class Meta:
-        model = Feedback
+        model = models.Feedback
         fields = ['name', 'email', 'question']

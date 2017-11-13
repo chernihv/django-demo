@@ -1,6 +1,13 @@
 ﻿{% extends 'blog/base.html' %}
 {% block page_content %}
 
+    {% if message %}
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>{{ message }}</strong>
+        </div>
+    {% endif %}
+
     <div class="post-title margin-top-70">
         <h1>Contact <span class="main-color">Me</span></h1>
     </div>
@@ -29,19 +36,23 @@
                     {% csrf_token %}
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <input type="text" id="name" class="form-control" placeholder="Your Name">
+                            <input required type="text" id="name" name="{{ form.name.html_name }}" class="form-control"
+                                   placeholder="{{ form.name.label }}">
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <input type="email" id="email" class="form-control" placeholder="Your Email">
+                            <input required type="email" id="email" name="{{ form.email.html_name }}"
+                                   class="form-control" placeholder="{{ form.email.label }}">
                         </div>
                     </div>
 
                     <div class="col-sm-12">
                         <div class="textarea-message form-group">
-                            <textarea id="message" class="textarea-message form-control" placeholder="Your Message" rows="5"></textarea>
+                            <textarea required maxlength="{{ form.question.max_length }}" id="message"
+                                      name="{{ form.question.html_name }}" class="textarea-message form-control"
+                                      placeholder="{{ form.question.label }}" rows="5"></textarea>
                         </div>
                     </div>
 
