@@ -51,7 +51,7 @@
 
                         {% block content_header %}
                             <div class="sub-title">
-                                <h2>{% block content_header_title %}ChernihV Blog{% endblock content_header_title %}</h2>
+                                <h2>{% block content_header_title %}<a href="{% url 'blog:index' %}">ChernihV Blog</a>{% endblock content_header_title %}</h2>
                                 {% block content_header_icon %}
                                     <a href="{% url 'blog:contact' %}"><i class="icon-envelope"></i></a>
                                 {% endblock content_header_icon %}
@@ -89,6 +89,7 @@
                                     Василий</a>
                                 </div>
                                 <a href="mailto:vasyachemax@yandex.ru">vasyachemax@yandex.ru</a>
+                                <p>Powered by Django Framework</p>
                             {% endblock page_footer_copyrigth %}
 
                         </footer>

@@ -25,7 +25,8 @@
 
             <div class="row">
 
-                <form>
+                <form method="post" action="{% url 'blog:contact' %}">
+                    {% csrf_token %}
                     <div class="col-sm-6">
                         <div class="form-group">
                             <input type="text" id="name" class="form-control" placeholder="Your Name">

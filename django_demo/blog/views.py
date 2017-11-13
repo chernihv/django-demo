@@ -1,8 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpRequest
-from . import models
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.contrib.auth.models import User
+from django.utils import timezone
+
+from . import models
+from . import forms
+from . import helpers
 
 
 # Create your views here.
@@ -12,8 +16,7 @@ def index(request: HttpRequest):
 
 
 def contact(request: HttpRequest):
-    feedback_model = models.Feedback
-    return render(request, 'blog/contact.html', {'feedback_model': feedback_model})
+    return render(request, 'blog/contact.html')
 
 
 def post_detail(request: HttpRequest, post_id: int):
