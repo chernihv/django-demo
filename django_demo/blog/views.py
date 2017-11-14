@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponseRedirect, HttpResponse
 from django.shortcuts import reverse
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.contrib.auth.models import User
@@ -17,6 +17,7 @@ def index(request: HttpRequest):
 
 
 def contact(request: HttpRequest):
+    message = None
     if 'POST' in request.method:
         form = forms.FeedbackForm(request.POST)
         if form.is_valid():
@@ -25,10 +26,9 @@ def contact(request: HttpRequest):
             model.created_at = timezone.now()
             model.save()
             message = 'Question sent to admin'
-            return render(request, 'blog/contact.html', {'form': form, 'message': message})
     else:
         form = forms.FeedbackForm()
-    return render(request, 'blog/contact.html', {'form': form})
+    return render(request, 'blog/contact.html', {'form': form, 'message': message})
 
 
 def post_detail(request: HttpRequest, post_id: int):

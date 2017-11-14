@@ -1,5 +1,20 @@
 {% extends 'blog/base.html' %}
+{% load staticfiles %}
 {% block page_content %}
-    {{ post.title }}
-    {{ post.post_text }}
+
+    <div class="col-md-12 blog-post">
+        {% if post.have_post_image %}
+            <div class="post-image">
+                <img src="{% static 'blog/user_files' %}/{{ post.get_post_image_name }}" alt="">
+            </div>
+        {% endif %}
+        <div class="post-title">
+            <a href="{% url 'blog:detail' post.id %}"><h1>{{ post.title }}</h1></a>
+        </div>
+        <div class="post-info">
+            <span>{{ post.created_at|date }} / by <a href="{% url 'blog:user' post.user.id %}">{{ post.user.username }}</a></span>
+        </div>
+        <p>{{ post.post_text }}</p>
+    </div>
+
 {% endblock page_content %}

@@ -1,4 +1,27 @@
 {% extends 'blog/base.html' %}
-{% block page_content %}
-    {{ user.username }}
-{% endblock page_content %}
+{% load staticfiles %}
+{% block page_content_body %}
+    <div class="panel panel-default">
+        <div class="panel-heading">Posts user: <a href="{% url 'blog:user' user.id %}">{{ user.username }}</a></div>
+        <div class="panel-body">
+            {% for post in user.post_set.all %}
+
+                <div class="col-md-12 blog-post">
+                    {% if post.have_post_image %}
+                        <div class="post-image">
+                            <img src="{% static 'blog/user_files' %}/{{ post.get_post_image_name }}" alt="">
+                        </div>
+                    {% endif %}
+                    <div class="post-title">
+                        <a href="{% url 'blog:detail' post.id %}"><h1>{{ post.title }}</h1></a>
+                    </div>
+                    <div class="post-info">
+                        <span>{{ post.created_at|date }} / by <a href="{% url 'blog:user' post.user.id %}">{{ post.user.username }}</a></span>
+                    </div>
+                    <p>{{ post.post_text }}</p>
+                </div>
+
+            {% endfor %}
+        </div>
+    </div>
+{% endblock page_content_body %}

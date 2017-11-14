@@ -52,9 +52,9 @@
 
 body {
     font-family: "Poppins", sans-serif;
-    background: #fafafa !important;
+    background: url("../images/bg/background.png")
 }
-	
+
 html {
     position: relative;
     min-height: 100%;
