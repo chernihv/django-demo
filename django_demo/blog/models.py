@@ -16,6 +16,7 @@ class Post(models.Model):
     title = models.CharField(max_length=50)
     post_text = models.CharField(max_length=5000)
     created_at = models.DateTimeField()
+    is_removed = models.BooleanField(default=False)
 
     def have_post_image(self):
         return self.postfile_set.filter(file_type=PostFile.POST_IMAGE).exists()

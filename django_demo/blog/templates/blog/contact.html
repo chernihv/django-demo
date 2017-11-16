@@ -37,21 +37,21 @@
                     {% csrf_token %}
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <input required type="text" id="name" name="{{ form.name.html_name }}" class="form-control"
+                            <input required type="text" id="{{ form.name.html_name }}" name="{{ form.name.html_name }}" class="form-control"
                                    placeholder="{{ form.name.label }}">
                         </div>
                     </div>
 
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <input required type="email" id="email" name="{{ form.email.html_name }}"
+                            <input required type="email" id="{{ form.email.html_name }}" name="{{ form.email.html_name }}"
                                    class="form-control" placeholder="{{ form.email.label }}">
                         </div>
                     </div>
 
                     <div class="col-sm-12">
                         <div class="textarea-message form-group">
-                            <textarea required maxlength="{{ form.question.max_length }}" id="message"
+                            <textarea required maxlength="{{ form.question.max_length }}" id="{{ form.question.html_name }}"
                                       name="{{ form.question.html_name }}" class="textarea-message form-control"
                                       placeholder="{{ form.question.label }}" rows="5"></textarea>
                         </div>

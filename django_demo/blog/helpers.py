@@ -13,3 +13,7 @@ def get_client_ip(request: HttpRequest):
 
 def go_home():
     return HttpResponseRedirect(reverse('blog:index'))
+
+
+def go_login():
+    return HttpResponseRedirect(reverse('blog:login'))

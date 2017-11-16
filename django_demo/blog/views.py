@@ -1,5 +1,5 @@
 from django.shortcuts import render, reverse, get_object_or_404, get_list_or_404
-from django.http import HttpRequest, HttpResponseRedirect, HttpResponse
+from django.http import HttpRequest, HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib import auth
@@ -12,7 +12,7 @@ from . import decorators
 
 # Create your views here.
 def index(request: HttpRequest):
-    posts = models.Post.objects.all()
+    posts = models.Post.objects.order_by('-created_at').filter(is_removed=False)
     return render(request, 'blog/index.html', {'posts': posts})
 
 
@@ -29,7 +29,7 @@ def user_login(request: HttpRequest):
     return render(request, 'blog/user_login.html', {'form': form})
 
 
-@decorators.my_login_require
+@decorators.auth_only
 def user_logout(request: HttpRequest):
     auth.logout(request)
     return helpers.go_home()
@@ -54,12 +54,12 @@ def user_registration(request: HttpRequest):
     return render(request, 'blog/user_registration.html', {'form': form, 'message': message})
 
 
-@decorators.my_login_require
+@decorators.auth_only
 def user_profile(request: HttpRequest):
     return render(request, 'blog/user_profile.html')
 
 
-@decorators.my_login_require
+@decorators.auth_only
 def change_password_user(request: HttpRequest):
     return helpers.go_home()
 
@@ -79,17 +79,53 @@ def contact(request: HttpRequest):
     return render(request, 'blog/contact.html', {'form': form, 'message': message})
 
 
-@decorators.my_login_require
+@decorators.auth_only
 def post_create(request: HttpRequest):
-    form = 1
+    if 'POST' in request.method:
+        form = forms.PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.created_at = timezone.now()
+            post.user = request.user
+            post.save()
+            return HttpResponseRedirect(reverse('blog:detail', args=[post.id]))
+    else:
+        form = forms.PostForm()
     return render(request, 'blog/post_create.html', {'form': form})
 
 
+@decorators.auth_only
+def post_edit(request: HttpRequest, post_id: int):
+    post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
+    form = forms.PostForm(instance=post)
+    if request.user.id == post.user_id:
+        if 'POST' in request.method:
+            form = forms.PostForm(request.POST, instance=post)
+            if form.is_valid():
+                form.save()
+            return HttpResponseRedirect(reverse('blog:detail', args=[post.id]))
+        else:
+            return render(request, 'blog/post_edit.html', {'form': form})
+    else:
+        return HttpResponseForbidden()
+
+
+@decorators.auth_only
+def post_delete(request: HttpRequest, post_id: int):
+    post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
+    if request.user.id == post.user_id:
+        post.is_removed = True
+        post.save()
+        return helpers.go_home()
+    else:
+        return HttpResponseForbidden()
+
+
 def post_detail(request: HttpRequest, post_id: int):
-    post = get_object_or_404(models.Post, pk=post_id)
+    post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
     return render(request, 'blog/post_detail.html', {'post': post})
 
 
 def user_detail(request: HttpRequest, user_id: int):
-    user = User.objects.get(pk=user_id)
+    user = get_object_or_404(User, pk=user_id)
     return render(request, 'blog/user_detail.html', {'user': user})

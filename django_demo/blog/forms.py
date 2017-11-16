@@ -19,3 +19,9 @@ class UserLoginForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'password']
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = models.Post
+        fields = ['title', 'post_text']

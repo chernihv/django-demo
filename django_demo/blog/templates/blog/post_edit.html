@@ -1,10 +1,10 @@
 {% extends 'blog/base.html' %}
 {% load staticfiles %}
-{% block page_title %}Create Post{% endblock page_title %}
+{% block page_title %}Edit Post{% endblock page_title %}
 {% block page_content %}
 
     <div class="post-title margin-top-70">
-        <h1>Create <span class="main-color">Post</span></h1>
+        <h1>Edit <span class="main-color">Post</span></h1>
     </div>
 
 
@@ -12,12 +12,12 @@
         <div class="col-md-12">
             <div class="row">
 
-                <form method="post" action="{% url 'blog:create' %}">
+                <form method="post" action="{% url 'blog:edit' form.instance.id %}">
                     {% csrf_token %}
                     <div class="col-sm-12">
                         <div class="form-group">
                             <input required type="text" id="{{ form.title.html_name }}"
-                                   name="{{ form.title.html_name }}" class="form-control"
+                                   name="{{ form.title.html_name }}" class="form-control" value="{{ form.title.value }}"
                                    placeholder="{{ form.title.label }}">
                         </div>
                     </div>
@@ -25,12 +25,12 @@
                     <div class="col-sm-12">
                         <div class="form-group">
                             <textarea required id="{{ form.post_text.html_name }}" name="{{ form.post_text.html_name }}"
-                                      class="form-control" placeholder="{{ form.post_text.label }}"></textarea>
+                                      class="form-control" placeholder="{{ form.post_text.label }}">{{ form.post_text.value }}</textarea>
                         </div>
                     </div>
 
                     <div class="text-center">
-                        <button type="submit" class="load-more-button">Send</button>
+                        <button type="submit" class="load-more-button">Save</button>
                     </div>
                 </form>
 

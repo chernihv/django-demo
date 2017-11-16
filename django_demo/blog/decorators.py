@@ -3,20 +3,20 @@ from django.shortcuts import reverse
 from . import helpers
 
 
-def my_login_require(func):
-    def wrapper(request, *args):
+def auth_only(func):
+    def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
-            return func(request, *args)
+            return func(request, *args, **kwargs)
         else:
-            return HttpResponseRedirect(reverse('blog:login'))
+            return helpers.go_login()
 
     return wrapper
 
 
 def guest_only(func):
-    def wrapper(request, *args):
+    def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return func(request, *args)
+            return func(request, *args, **kwargs)
         else:
             return helpers.go_home()
 
