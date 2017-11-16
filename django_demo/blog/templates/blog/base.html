@@ -51,13 +51,30 @@
 
                         {% block content_header %}
                             <div class="sub-title">
-                                <h2>{% block content_header_title %}<a href="{% url 'blog:index' %}">ChernihV Blog</a>{% endblock content_header_title %}</h2>
+                                {% block content_header_title %}
+                                    <a href="{% url 'blog:index' %}" title="Home page" class="btn">
+                                        <h2>ChernihVBlog</h2>
+                                    </a>
+                                {% endblock content_header_title %}
                                 {% block content_header_icon %}
-                                    <a href="{% url 'blog:contact' %}"><i class="icon-envelope"></i></a>
+                                    <a href="{% url 'blog:contact' %}" title="Contact to me">
+                                        <i class="icon-envelope btn"></i>
+                                    </a>
+
+                                    {# login/logout #}
+                                    {% if request.user.is_authenticated %}
+                                        <a href="{% url 'blog:logout' %}" title="Logout">
+                                            <i class="icon-pencil btn"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'blog:login' %}" title="Login">
+                                            <i class="icon-user btn"></i>
+                                        </a>
+                                    {% endif %}
+
                                 {% endblock content_header_icon %}
                             </div>
                         {% endblock content_header %}
-
                         <div class="col-md-12 content-page">
                             {% block page_content %}
                                 {% block page_content_body %}
@@ -80,6 +97,7 @@
                             <ul class="menu-link">
                                 {% block footer_navs_button %}
                                     <li><a href="{% url 'blog:index' %}">Home</a></li>
+                                    <li><a href="{% url 'blog:login' %}">Login</a></li>
                                     <li><a href="{% url 'blog:contact' %}">Contact</a></li>
                                 {% endblock footer_navs_button %}
                             </ul>

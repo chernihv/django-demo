@@ -1,5 +1,6 @@
 {% extends 'blog/base.html' %}
 {% load staticfiles %}
+{% block page_title %}User: {{ user.username }}{% endblock page_title %}
 {% block page_content_body %}
     <div class="panel panel-default">
         <div class="panel-heading">Posts user: <a href="{% url 'blog:user' user.id %}">{{ user.username }}</a></div>

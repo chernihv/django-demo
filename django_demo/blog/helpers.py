@@ -1,4 +1,5 @@
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponseRedirect
+from django.shortcuts import reverse
 
 
 def get_client_ip(request: HttpRequest):
@@ -8,3 +9,7 @@ def get_client_ip(request: HttpRequest):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+def go_home():
+    return HttpResponseRedirect(reverse('blog:index'))

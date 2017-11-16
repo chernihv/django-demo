@@ -1,9 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, reverse, get_object_or_404, get_list_or_404
 from django.http import HttpRequest, HttpResponseRedirect, HttpResponse
-from django.shortcuts import reverse
-from django.shortcuts import get_list_or_404, get_object_or_404
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.contrib import auth
 
 from . import models
 from . import forms
@@ -14,6 +13,38 @@ from . import helpers
 def index(request: HttpRequest):
     posts = models.Post.objects.all()
     return render(request, 'blog/index.html', {'posts': posts})
+
+
+def user_login(request: HttpRequest):
+    if request.user.is_authenticated:
+        return helpers.go_home()
+    if 'POST' in request.method:
+        username = request.POST['username']
+        password = request.POST['password']
+        user = auth.authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                auth.login(request, user)
+                return helpers.go_home()
+    form = forms.UserLoginForm()
+    return render(request, 'blog/user_login.html', {'form': form})
+
+
+def user_logout(request: HttpRequest):
+    auth.logout(request)
+    return helpers.go_home()
+
+
+def user_registration(request: HttpRequest):
+    user = User.objects.create_user('username', 'email', 'password')
+    form = forms.UserRegistrationForm()
+    return render(request, 'blog/user_registration.html', {'form': form})
+
+
+def change_password_user(request: HttpRequest):
+    user = User.objects.get(pk=1)
+    user.set_password(request.POST)
+    pass
 
 
 def contact(request: HttpRequest):
@@ -29,6 +60,11 @@ def contact(request: HttpRequest):
     else:
         form = forms.FeedbackForm()
     return render(request, 'blog/contact.html', {'form': form, 'message': message})
+
+
+def post_create(request: HttpRequest):
+    form = 1
+    return render(request, 'blog/post_create.html', {'form': form})
 
 
 def post_detail(request: HttpRequest, post_id: int):

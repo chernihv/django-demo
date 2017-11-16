@@ -1,5 +1,6 @@
 {% extends 'blog/base.html' %}
 {% load staticfiles %}
+{% block page_title %}{{ post.title }}{% endblock page_title %}
 {% block page_content %}
 
     <div class="col-md-12 blog-post">

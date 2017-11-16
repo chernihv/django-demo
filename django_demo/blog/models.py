@@ -28,7 +28,8 @@ class Post(models.Model):
 
 class PostFile(models.Model):
     POST_IMAGE = 'post_image'
-    IMAGE = 'image'
+    LOCAL_IMAGE = 'local_image'
+    REMOTE_IMAGE = 'remote_image'
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     file_name = models.CharField(max_length=150)
