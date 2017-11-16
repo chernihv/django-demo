@@ -7,6 +7,7 @@ class Feedback(models.Model):
     email = models.EmailField(help_text='Ваш email')
     question = models.CharField(max_length=1500, help_text='Вопрос')
     created_at = models.DateTimeField()
+    is_read = models.BooleanField(default=False)
     user_ip = models.CharField(max_length=50)
 
 

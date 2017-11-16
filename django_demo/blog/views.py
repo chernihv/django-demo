@@ -7,6 +7,7 @@ from django.contrib import auth
 from . import models
 from . import forms
 from . import helpers
+from . import decorators
 
 
 # Create your views here.
@@ -15,36 +16,52 @@ def index(request: HttpRequest):
     return render(request, 'blog/index.html', {'posts': posts})
 
 
+@decorators.guest_only
 def user_login(request: HttpRequest):
-    if request.user.is_authenticated:
-        return helpers.go_home()
     if 'POST' in request.method:
         username = request.POST['username']
         password = request.POST['password']
         user = auth.authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                auth.login(request, user)
-                return helpers.go_home()
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return helpers.go_home()
     form = forms.UserLoginForm()
     return render(request, 'blog/user_login.html', {'form': form})
 
 
+@decorators.my_login_require
 def user_logout(request: HttpRequest):
     auth.logout(request)
     return helpers.go_home()
 
 
+@decorators.guest_only
 def user_registration(request: HttpRequest):
-    user = User.objects.create_user('username', 'email', 'password')
-    form = forms.UserRegistrationForm()
-    return render(request, 'blog/user_registration.html', {'form': form})
+    message = None
+    if 'POST' in request.method:
+        form = forms.UserRegistrationForm(request.POST)
+        if form.is_valid():
+            username = request.POST['username']
+            password = request.POST['password']
+            email = request.POST['email']
+            user = User.objects.create_user(username=username, password=password, email=email)
+            auth.login(request, user)
+            return helpers.go_home()
+        else:
+            message = 'User: ' + request.POST['username'] + ' already exist'
+    else:
+        form = forms.UserRegistrationForm()
+    return render(request, 'blog/user_registration.html', {'form': form, 'message': message})
 
 
+@decorators.my_login_require
+def user_profile(request: HttpRequest):
+    return render(request, 'blog/user_profile.html')
+
+
+@decorators.my_login_require
 def change_password_user(request: HttpRequest):
-    user = User.objects.get(pk=1)
-    user.set_password(request.POST)
-    pass
+    return helpers.go_home()
 
 
 def contact(request: HttpRequest):
@@ -62,6 +79,7 @@ def contact(request: HttpRequest):
     return render(request, 'blog/contact.html', {'form': form, 'message': message})
 
 
+@decorators.my_login_require
 def post_create(request: HttpRequest):
     form = 1
     return render(request, 'blog/post_create.html', {'form': form})

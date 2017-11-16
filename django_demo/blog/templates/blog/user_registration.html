@@ -3,6 +3,13 @@
 {% block page_title %}User Registration{% endblock page_title %}
 {% block page_content %}
 
+    {% if message %}
+        <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>{{ message }}</strong>
+        </div>
+    {% endif %}
+
     <div class="post-title margin-top-70">
         <h1>User <span class="main-color">Registration</span></h1>
     </div>
@@ -32,7 +39,7 @@
 
                     <div class="col-sm-12">
                         <div class="form-group">
-                            <input required type="text" id="{{ form.password.html_name }}"
+                            <input required type="password" id="{{ form.password.html_name }}"
                                    name="{{ form.password.html_name }}" class="form-control"
                                    placeholder="{{ form.password.label }}">
                         </div>
