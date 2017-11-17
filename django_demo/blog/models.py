@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from os import remove
+from django.conf import settings
 
 
 class Feedback(models.Model):
@@ -41,6 +43,10 @@ class PostFile(models.Model):
 
     def __str__(self):
         return "{id} | {type} : {filename}".format(id=self.id, type=self.file_type, filename=self.file_name)
+
+    def delete(self, using=None, keep_parents=False):
+        remove(settings.BASE_DIR + 'blog/static/blog/user_files' + self.file_name)
+        super(PostFile, self).delete()
 
 
 class PostComment(models.Model):

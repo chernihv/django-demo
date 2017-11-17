@@ -3,6 +3,7 @@ from django.http import HttpRequest, HttpResponseRedirect, HttpResponse, HttpRes
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib import auth
+import time
 
 from . import models
 from . import forms
@@ -97,15 +98,24 @@ def hide_question(request: HttpRequest, question_id: int):
 def post_create(request: HttpRequest):
     if 'POST' in request.method:
         form = forms.PostForm(request.POST)
+        image_form = forms.PostFileForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.created_at = timezone.now()
             post.user = request.user
             post.save()
+            if image_form.is_valid():
+                file = request.FILES['file']
+                saved_name = str(time.time()) + file.name
+                helpers.save_file(file, saved_name)
+                file_model = models.PostFile(post_id=post.id, file_type=models.PostFile.POST_IMAGE,
+                                             file_name=saved_name, created_at=timezone.now())
+                file_model.save()
             return HttpResponseRedirect(reverse('blog:detail', args=[post.id]))
     else:
         form = forms.PostForm()
-    return render(request, 'blog/post_create.html', {'form': form})
+        image_form = forms.PostFileForm()
+    return render(request, 'blog/post_create.html', {'form': form, 'image_form': image_form})
 
 
 @decorators.auth_only

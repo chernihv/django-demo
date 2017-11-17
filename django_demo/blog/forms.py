@@ -25,3 +25,7 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = models.Post
         fields = ['title', 'post_text']
+
+
+class PostFileForm(forms.Form):
+    file = forms.ImageField()

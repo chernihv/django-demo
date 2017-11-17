@@ -7,13 +7,20 @@
         <h1>Create <span class="main-color">Post</span></h1>
     </div>
 
-
     <div class="row margin-top-30">
         <div class="col-md-12">
             <div class="row">
 
-                <form method="post" action="{% url 'blog:create' %}">
+                <form method="post" enctype="multipart/form-data" action="{% url 'blog:create' %}">
                     {% csrf_token %}
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="btn btn-info" for="post_image">+ Add post image header</label>
+                        </div>
+                    </div>
+                    <a hidden><input type="file" name="{{ image_form.file.html_name }}" id="post_image"></a>
+
                     <div class="col-sm-12">
                         <div class="form-group">
                             <input required type="text" id="{{ form.title.html_name }}"
