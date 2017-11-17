@@ -69,6 +69,11 @@
                                         <a href="{% url 'blog:create' %}" title="Create post">
                                             <i class="icon-pencil btn"></i>
                                         </a>
+                                        {% if request.user.is_superuser %}
+                                            <a href="{% url 'blog:new_question' %}" title="New questions">
+                                                <i class="icon-question btn"></i>
+                                            </a>
+                                        {% endif %}
                                     {% else %}
                                         <a href="{% url 'blog:login' %}" title="Login">
                                             <i class="icon-login btn"></i>

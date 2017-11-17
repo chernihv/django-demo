@@ -79,6 +79,20 @@ def contact(request: HttpRequest):
     return render(request, 'blog/contact.html', {'form': form, 'message': message})
 
 
+@decorators.admin_only
+def new_questions(request: HttpRequest):
+    questions = models.Feedback.objects.filter(is_read=False)
+    return render(request, 'blog/questions.html', {'questions': questions})
+
+
+@decorators.admin_only
+def hide_question(request: HttpRequest, question_id: int):
+    question = models.Feedback.objects.get(pk=question_id)
+    question.is_read = True
+    question.save()
+    return HttpResponseRedirect(reverse('blog:new_question'))
+
+
 @decorators.auth_only
 def post_create(request: HttpRequest):
     if 'POST' in request.method:

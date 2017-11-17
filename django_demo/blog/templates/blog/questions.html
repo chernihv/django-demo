@@ -1,0 +1,33 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% block page_content %}
+
+    <div class="post-title margin-top-70">
+        <h1>New <span class="main-color">Questions</span></h1>
+    </div>
+
+    {% if not questions %}
+        <div class="alert alert-info">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>No new Questions</strong>
+        </div>
+    {% else %}
+
+        {% for question in questions %}
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ question.email }} / {{ question.name }}</h3>
+                    <a href="{% url 'blog:hide_question' question.id %}">Hide</a>
+                </div>
+                <div class="panel-body">
+                    {{ question.question }}
+                </div>
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+{% endblock page_content %}
