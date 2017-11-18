@@ -1,6 +1,7 @@
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import reverse
 from django.conf import settings
+from os import remove
 
 
 def get_client_ip(request: HttpRequest):
@@ -25,3 +26,8 @@ def save_file(file, file_name: str):
     with open(path_to_save + file_name, 'wb+') as path:
         for chunk in file.chunks():
             path.write(chunk)
+
+
+def delete_file(file_name: str):
+    path_to_del = settings.BASE_DIR + '/blog/static/blog/user_files/'
+    remove(path_to_del + file_name)

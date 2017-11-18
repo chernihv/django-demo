@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-from os import remove
-from django.conf import settings
+from django.shortcuts import get_object_or_404
+
+from . import helpers
 
 
 class Feedback(models.Model):
@@ -20,11 +21,19 @@ class Post(models.Model):
     created_at = models.DateTimeField()
     is_removed = models.BooleanField(default=False)
 
+    @staticmethod
+    def get_all_active_posts():
+        return Post.objects.filter(is_removed=False).order_by('-created_at')
+
+    @staticmethod
+    def get_post_or_404(post_id: int):
+        return get_object_or_404(Post, pk=post_id, is_removed=False)
+
     def have_post_image(self):
-        return self.postfile_set.filter(file_type=PostFile.POST_IMAGE).exists()
+        return self.postfile_set.filter(file_type=PostFile.POST_IMAGE, is_removed=False).exists()
 
     def get_post_image_name(self):
-        return self.postfile_set.filter(file_type=PostFile.POST_IMAGE).first().file_name
+        return self.postfile_set.filter(file_type=PostFile.POST_IMAGE, is_removed=False).first().file_name
 
     def __str__(self):
         return "{id} | {author} : {title}".format(id=self.id, author=self.user.username, title=self.title)
@@ -39,14 +48,15 @@ class PostFile(models.Model):
     file_name = models.CharField(max_length=150)
     file_type = models.CharField(max_length=50)
     file_description = models.CharField(max_length=150, null=True, blank=True)
+    is_removed = models.BooleanField(default=False)
     created_at = models.DateTimeField()
 
     def __str__(self):
         return "{id} | {type} : {filename}".format(id=self.id, type=self.file_type, filename=self.file_name)
 
-    def delete(self, using=None, keep_parents=False):
-        remove(settings.BASE_DIR + 'blog/static/blog/user_files' + self.file_name)
-        super(PostFile, self).delete()
+    def delete(self, *args, **kwargs):
+        helpers.delete_file(self.file_name)
+        super(PostFile, self).delete(*args, **kwargs)
 
 
 class PostComment(models.Model):

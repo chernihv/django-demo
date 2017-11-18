@@ -84,6 +84,17 @@
                             </div>
                         {% endblock content_header %}
                         <div class="col-md-12 content-page">
+
+                            {% if messages %}
+                                {% for message in messages %}
+                                    <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                                        </button>
+                                        <strong>{{ message }}</strong>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+
                             {% block page_content %}
                                 {% block page_content_body %}
                                 {% endblock page_content_body %}

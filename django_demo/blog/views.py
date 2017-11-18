@@ -2,8 +2,8 @@ from django.shortcuts import render, reverse, get_object_or_404, get_list_or_404
 from django.http import HttpRequest, HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.contrib import auth
-import time
+from django.contrib import auth, messages
+from django.utils.crypto import get_random_string
 
 from . import models
 from . import forms
@@ -13,7 +13,7 @@ from . import decorators
 
 # Create your views here.
 def index(request: HttpRequest):
-    posts = models.Post.objects.order_by('-created_at').filter(is_removed=False)
+    posts = models.Post.get_all_active_posts()
     return render(request, 'blog/index.html', {'posts': posts})
 
 
@@ -38,7 +38,6 @@ def user_logout(request: HttpRequest):
 
 @decorators.guest_only
 def user_registration(request: HttpRequest):
-    message = None
     if 'POST' in request.method:
         form = forms.UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -49,10 +48,10 @@ def user_registration(request: HttpRequest):
             auth.login(request, user)
             return helpers.go_home()
         else:
-            message = 'User: ' + request.POST['username'] + ' already exist'
+            messages.add_message(request, messages.INFO, 'User: ' + request.POST['username'] + ' already exist')
     else:
         form = forms.UserRegistrationForm()
-    return render(request, 'blog/user_registration.html', {'form': form, 'message': message})
+    return render(request, 'blog/user_registration.html', {'form': form})
 
 
 @decorators.auth_only
@@ -66,7 +65,6 @@ def change_password_user(request: HttpRequest):
 
 
 def contact(request: HttpRequest):
-    message = None
     if 'POST' in request.method:
         form = forms.FeedbackForm(request.POST)
         if form.is_valid():
@@ -74,10 +72,10 @@ def contact(request: HttpRequest):
             model.user_ip = helpers.get_client_ip(request)
             model.created_at = timezone.now()
             model.save()
-            message = 'Question sent to admin'
+            messages.add_message(request, messages.INFO, 'Question sent to admin')
     else:
         form = forms.FeedbackForm()
-    return render(request, 'blog/contact.html', {'form': form, 'message': message})
+    return render(request, 'blog/contact.html', {'form': form})
 
 
 @decorators.admin_only
@@ -106,7 +104,7 @@ def post_create(request: HttpRequest):
             post.save()
             if image_form.is_valid():
                 file = request.FILES['file']
-                saved_name = str(time.time()) + file.name
+                saved_name = get_random_string() + file.name
                 helpers.save_file(file, saved_name)
                 file_model = models.PostFile(post_id=post.id, file_type=models.PostFile.POST_IMAGE,
                                              file_name=saved_name, created_at=timezone.now())
@@ -120,23 +118,35 @@ def post_create(request: HttpRequest):
 
 @decorators.auth_only
 def post_edit(request: HttpRequest, post_id: int):
-    post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
+    post = models.Post.get_post_or_404(post_id)
     form = forms.PostForm(instance=post)
+    image_form = forms.PostFileForm()
     if request.user.id == post.user_id:
         if 'POST' in request.method:
             form = forms.PostForm(request.POST, instance=post)
+            image_form = forms.PostFileForm(request.POST, request.FILES)
             if form.is_valid():
                 form.save()
+                if image_form.is_valid():
+                    old_post = post.postfile_set.filter(file_type=models.PostFile.POST_IMAGE, is_removed=False).first()
+                    old_post.is_removed = True
+                    old_post.save()
+                    file = request.FILES['file']
+                    saved_name = get_random_string() + file.name
+                    helpers.save_file(file, saved_name)
+                    file_model = models.PostFile(post_id=post.id, file_type=models.PostFile.POST_IMAGE,
+                                                 file_name=saved_name, created_at=timezone.now())
+                    file_model.save()
             return HttpResponseRedirect(reverse('blog:detail', args=[post.id]))
         else:
-            return render(request, 'blog/post_edit.html', {'form': form})
+            return render(request, 'blog/post_edit.html', {'form': form, 'image_form': image_form})
     else:
         return HttpResponseForbidden()
 
 
 @decorators.auth_only
 def post_delete(request: HttpRequest, post_id: int):
-    post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
+    post = models.Post.get_post_or_404(post_id)
     if request.user.id == post.user_id:
         post.is_removed = True
         post.save()
@@ -146,7 +156,7 @@ def post_delete(request: HttpRequest, post_id: int):
 
 
 def post_detail(request: HttpRequest, post_id: int):
-    post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
+    post = models.Post.get_post_or_404(post_id)
     return render(request, 'blog/post_detail.html', {'post': post})
 
 

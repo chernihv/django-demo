@@ -11,35 +11,7 @@
         <div class="col-md-12">
             <div class="row">
 
-                <form method="post" enctype="multipart/form-data" action="{% url 'blog:create' %}">
-                    {% csrf_token %}
-
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            <label class="btn btn-info" for="post_image">+ Add post image header</label>
-                        </div>
-                    </div>
-                    <a hidden><input type="file" name="{{ image_form.file.html_name }}" id="post_image"></a>
-
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            <input required type="text" id="{{ form.title.html_name }}"
-                                   name="{{ form.title.html_name }}" class="form-control"
-                                   placeholder="{{ form.title.label }}">
-                        </div>
-                    </div>
-
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            <textarea required id="{{ form.post_text.html_name }}" name="{{ form.post_text.html_name }}"
-                                      class="form-control" placeholder="{{ form.post_text.label }}"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="text-center">
-                        <button type="submit" class="load-more-button">Send</button>
-                    </div>
-                </form>
+                {% include 'blog/_post_form.html' with form=form image_form=image_form  %}
 
             </div>
         </div>

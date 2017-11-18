@@ -1,45 +1,9 @@
 {% extends 'blog/base.html' %}
 {% load staticfiles %}
+{% load blog_tags %}
 {% block page_title %}{{ post.title }}{% endblock page_title %}
 {% block page_content %}
 
-    <div class="col-md-12 blog-post">
-        {% if post.have_post_image %}
-            <div class="post-image">
-                <img src="{% static 'blog/user_files' %}/{{ post.get_post_image_name }}" alt="">
-            </div>
-        {% endif %}
-        <div class="post-title">
-            <a href="{% url 'blog:detail' post.id %}"><h1>{{ post.title }}</h1></a>
-        </div>
-        <div class="post-info">
-            <span>
-                {{ post.created_at|date }} / by <a href="{% url 'blog:user' post.user.id %}">{{ post.user.username }}</a>
-                {% if request.user.id == post.user_id %}
-                    (
-                    <a href="{% url 'blog:edit' post.id %}">Edit</a>
-                    /
-                    <a data-toggle="modal" href="#modal-id">Delete</a>
-                    <div class="modal fade" id="modal-id">
-                    	<div class="modal-dialog">
-                    		<div class="modal-content">
-                    			<div class="modal-header">
-                    				<button type="button" class="close" data-dismiss="modal"
-                                            aria-hidden="true">&times;</button>
-                    				<h4 class="modal-title">Delete this post?</h4>
-                    			</div>
-                    			<div class="modal-footer">
-                    				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    				<a href="{% url 'blog:delete' post.id %}" type="button" class="btn btn-danger">Delete</a>
-                    			</div>
-                    		</div>
-                    	</div>
-                    </div>
-                    )
-                {% endif %}
-            </span>
-        </div>
-        <p>{{ post.post_text }}</p>
-    </div>
+    {% include 'blog/_post_block.html' with truncatechars=Fale post=post request=request %}
 
 {% endblock page_content %}

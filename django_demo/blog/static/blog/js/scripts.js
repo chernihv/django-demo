@@ -40,9 +40,9 @@
        /* Preloader */
 		
         $(window).load(function () {
-            $('.preloader').delay(800).fadeOut('slow');
+            $('.preloader').delay(0).fadeOut('slow');
          });
-		 		
+
 		
 		
        /* Smooth Scroll */
