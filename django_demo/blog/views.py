@@ -128,9 +128,10 @@ def post_edit(request: HttpRequest, post_id: int):
             if form.is_valid():
                 form.save()
                 if image_form.is_valid():
-                    old_post = post.postfile_set.filter(file_type=models.PostFile.POST_IMAGE, is_removed=False).first()
-                    old_post.is_removed = True
-                    old_post.save()
+                    old_post_file = post.postfile_set.filter(file_type=models.PostFile.POST_IMAGE, is_removed=False).first()
+                    if old_post_file:
+                        old_post_file.is_removed = True
+                        old_post_file.save()
                     file = request.FILES['file']
                     saved_name = get_random_string() + file.name
                     helpers.save_file(file, saved_name)
