@@ -13,6 +13,16 @@ class Feedback(models.Model):
     is_read = models.BooleanField(default=False)
     user_ip = models.CharField(max_length=50)
 
+    @staticmethod
+    def get_valid_questions():
+        return Feedback.objects.filter(is_read=False)
+
+    @staticmethod
+    def hide_question(q_id: int):
+        question = Feedback.objects.get(pk=q_id)
+        question.is_read = True
+        question.save()
+
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -29,11 +39,21 @@ class Post(models.Model):
     def get_post_or_404(post_id: int):
         return get_object_or_404(Post, pk=post_id, is_removed=False)
 
+    def remove_post(self):
+        self.is_removed = True
+        self.save()
+
     def have_post_image(self):
         return self.postfile_set.filter(file_type=PostFile.POST_IMAGE, is_removed=False).exists()
 
-    def get_post_image_name(self):
-        return self.postfile_set.filter(file_type=PostFile.POST_IMAGE, is_removed=False).first().file_name
+    def get_post_image(self):
+        return self.postfile_set.filter(file_type=PostFile.POST_IMAGE, is_removed=False).first()
+
+    def disable_post_image(self):
+        post_image = self.get_post_image()
+        if post_image is not None:
+            post_image.is_removed = True
+            post_image.save()
 
     def __str__(self):
         return "{id} | {author} : {title}".format(id=self.id, author=self.user.username, title=self.title)

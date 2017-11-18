@@ -9,7 +9,7 @@
 
                 {% if not post.is_removed %}
 
-                    {% include 'blog/_post_block.html' with post=post request=request truncatechars=False %}
+                    {% include 'blog/_post_block.html' with post=post request=request truncatechars=True %}
 
                 {% endif %}
 

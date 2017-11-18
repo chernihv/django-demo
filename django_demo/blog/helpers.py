@@ -1,6 +1,7 @@
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import reverse
 from django.conf import settings
+from django.utils.crypto import get_random_string
 from os import remove
 
 
@@ -21,6 +22,10 @@ def go_login():
     return HttpResponseRedirect(reverse('blog:login'))
 
 
+def redirect(url_name: str, *args, **kwargs):
+    return HttpResponseRedirect(reverse(url_name, *args, **kwargs))
+
+
 def save_file(file, file_name: str):
     path_to_save = settings.BASE_DIR + '/blog/static/blog/user_files/'
     with open(path_to_save + file_name, 'wb+') as path:
@@ -31,3 +36,18 @@ def save_file(file, file_name: str):
 def delete_file(file_name: str):
     path_to_del = settings.BASE_DIR + '/blog/static/blog/user_files/'
     remove(path_to_del + file_name)
+
+
+def get_fields_request(request: HttpRequest, *args):
+    result = []
+    for field in args:
+        result.append(request.POST[field])
+    return (*result,)
+
+
+def is_post(request: HttpRequest):
+    return 'POST' in request.method
+
+
+def get_valid_name(file):
+    return get_random_string(25) + file.name
