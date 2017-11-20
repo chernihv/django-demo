@@ -51,3 +51,19 @@ def is_post(request: HttpRequest):
 
 def get_valid_name(file):
     return get_random_string(25) + file.name
+
+
+class colorprint:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDSTR = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+    def __init__(self, string: str, color=None):
+        self._str = string
+        self._color = color
+        print("{begin}{string}{end}".format(begin=self._color, string=self._str, end=self.ENDSTR))

@@ -3,16 +3,16 @@ from django.contrib.auth.models import User
 from django.http import HttpRequest, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from django.utils.crypto import get_random_string
 
 from . import decorators
 from . import forms
+from . import models
+from . import constants
 from .helpers import (redirect, is_post, go_home, get_client_ip,
                       get_fields_request, save_file, get_valid_name)
-from . import models
 
 
-# Create your views here.
+# TODO Надо сделать обёртку для встраивания кода в посты.
 def index(request: HttpRequest):
     posts = models.Post.get_all_active_posts()
     return render(request, 'blog/index.html', {'posts': posts})
@@ -76,19 +76,20 @@ def contact(request: HttpRequest):
     return render(request, 'blog/contact.html', {'form': form})
 
 
-@decorators.admin_only
+@decorators.superuser_only
 def new_questions(request: HttpRequest):
     questions = models.Feedback.get_valid_questions()
     return render(request, 'blog/questions.html', {'questions': questions})
 
 
-@decorators.admin_only
+@decorators.superuser_only
 def hide_question(request: HttpRequest, question_id: int):
     models.Feedback.hide_question(question_id)
     return redirect('blog:new_question')
 
 
-@decorators.auth_only
+# TODO Сделать загрузку нескольких изображений с возможностью встраивать их в текст.
+@decorators.group_require(constants.Group.REGULAR_USER)
 def post_create(request: HttpRequest):
     if is_post(request):
         form = forms.PostForm(request.POST)
@@ -111,7 +112,7 @@ def post_create(request: HttpRequest):
     return render(request, 'blog/post_create.html', {'form': form, 'image_form': image_form})
 
 
-@decorators.auth_only
+@decorators.group_require(constants.Group.REGULAR_USER)
 def post_edit(request: HttpRequest, post_id: int):
     post = models.Post.get_post_or_404(post_id)
     form = forms.PostForm(instance=post)
@@ -136,7 +137,7 @@ def post_edit(request: HttpRequest, post_id: int):
         return HttpResponseForbidden()
 
 
-@decorators.auth_only
+@decorators.group_require(constants.Group.REGULAR_USER)
 def post_delete(request: HttpRequest, post_id: int):
     post = models.Post.get_post_or_404(post_id)
     if request.user.id == post.user_id:

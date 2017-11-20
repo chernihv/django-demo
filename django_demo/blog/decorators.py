@@ -1,4 +1,5 @@
 from django.http import HttpResponseForbidden
+from django.contrib.auth.models import User, Group
 from . import helpers
 
 
@@ -22,7 +23,7 @@ def guest_only(func):
     return wrapper
 
 
-def admin_only(func):
+def superuser_only(func):
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
             if request.user.is_superuser:
@@ -33,3 +34,33 @@ def admin_only(func):
             return helpers.go_login()
 
     return wrapper
+
+
+def permission_require(permission):
+    def decorator(func):
+        def wrapper(request, *args, **kwargs):
+            if request.user.has_perm(permission):
+                return func(request, *args, **kwargs)
+            else:
+                return HttpResponseForbidden()
+
+        return wrapper
+
+    return decorator
+
+
+def group_require(name):
+    def decorator(func):
+        def wrapper(request, *args, **kwargs):
+            if request.user.is_authenticated:
+                group = Group.objects.get(name=name)
+                if group in request.user.groups.all() or request.user.is_superuser:
+                    return func(request, *args, **kwargs)
+                else:
+                    return HttpResponseForbidden()
+            else:
+                return helpers.go_login()
+
+        return wrapper
+
+    return decorator
