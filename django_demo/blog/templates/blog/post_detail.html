@@ -6,4 +6,8 @@
 
     {% include 'blog/_post_block.html' with truncatechars=Fale post=post request=request %}
 
+    {% for comment in post.postcomment_set %}
+
+    {% endfor %}
+
 {% endblock page_content %}

@@ -3,6 +3,7 @@ from django.shortcuts import reverse
 from django.conf import settings
 from django.utils.crypto import get_random_string
 from os import remove
+import time
 
 
 def get_client_ip(request: HttpRequest):
@@ -50,7 +51,7 @@ def is_post(request: HttpRequest):
 
 
 def get_valid_name(file):
-    return get_random_string(25) + file.name
+    return get_random_string(25) + str((time.time())).replace('.', '') + file.name
 
 
 class colorprint:

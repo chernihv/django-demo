@@ -63,10 +63,20 @@ class Post(models.Model):
         return "{id} | {author} : {title}".format(id=self.id, author=self.user.username, title=self.title)
 
 
+class PostBlock(models.Model):
+    BLOCK_IMAGE = 'block_image'
+    BLOCK_CODE = 'block_code'
+    BLOCK_TEXT = 'block_text'
+    BLOCK_QUESTION = 'block_question'
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    block_type = models.CharField(max_length=50)
+    storage = models.CharField(max_length=1500)
+
+
 class PostFile(models.Model):
     POST_IMAGE = 'post_image'
     LOCAL_IMAGE = 'local_image'
-    REMOTE_IMAGE = 'remote_image'
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     file_name = models.CharField(max_length=150)
@@ -95,6 +105,7 @@ class PostComment(models.Model):
 
 class PostQuestion(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    block = models.ForeignKey(PostBlock, on_delete=models.CASCADE)
     question_text = models.CharField(max_length=500)
 
     def __str__(self):

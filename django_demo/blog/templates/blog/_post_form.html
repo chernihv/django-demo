@@ -2,16 +2,15 @@
 <form method="post" enctype="multipart/form-data" action="">
 
     {% csrf_token %}
-
     {% if form.instance.have_post_image %}
         <div class="col-md-12 blog-post">
             <div class="post-image">
-                <img src="{% static 'blog/user_files' %}/{{ form.instance.get_post_image.file_name }}" alt="">
+                <img id="post_image" src="{% static 'blog/user_files' %}/{{ form.instance.get_post_image.file_name }}">
             </div>
         </div>
         <div class="col-sm-3">
             <div class="form-group">
-                <label class="btn btn-success" for="post_image">~ Change post image header</label>
+                <label id="post_image_button" class="btn btn-success" for="post_image_input">~ Change post image header</label>
             </div>
         </div>
         <div class="col-sm6">
@@ -22,14 +21,21 @@
             </div>
         </div>
     {% else %}
+        <div class="col-md-12 blog-post">
+            <div class="post-image">
+                <img id="post_image" src="">
+            </div>
+        </div>
         <div class="col-sm-12">
             <div class="form-group">
-                <label class="btn btn-info" for="post_image">+ Add post image header</label>
+                <label id="post_image_button" class="btn btn-info" for="post_image_input">
+                    + Add post image header
+                </label>
             </div>
         </div>
     {% endif %}
 
-    <a hidden><input type="file" name="{{ image_form.file.html_name }}" id="post_image"></a>
+    <a hidden><input type="file" name="{{ image_form.file.html_name }}" id="post_image_input"></a>
 
     <div class="col-sm-12">
         <div class="form-group">

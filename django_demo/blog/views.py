@@ -12,7 +12,6 @@ from .helpers import (redirect, is_post, go_home, get_client_ip,
                       get_fields_request, save_file, get_valid_name)
 
 
-# TODO Надо сделать обёртку для встраивания кода в посты.
 def index(request: HttpRequest):
     posts = models.Post.get_all_active_posts()
     return render(request, 'blog/index.html', {'posts': posts})

@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load blog_tags %}
 <div class="col-md-12 blog-post">
 
     {% if post.have_post_image %}
@@ -40,10 +41,10 @@
         </span>
     </div>
     {% if truncatechars %}
-        <p>{{ post.post_text|truncatechars:200 }}</p>
+        <p>{{ post.post_text|truncatechars_html:200|code_wrapper|linebreaks }}</p>
         <a href="{% url 'blog:detail' post.id %}"
            class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
     {% else %}
-        <p>{{ post.post_text }}</p>
+        <p>{{ post.post_text|code_wrapper|linebreaks }}</p>
     {% endif %}
 </div>
