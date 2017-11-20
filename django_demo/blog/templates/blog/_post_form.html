@@ -1,12 +1,34 @@
+{% load staticfiles %}
 <form method="post" enctype="multipart/form-data" action="">
 
     {% csrf_token %}
 
-    <div class="col-sm-12">
-        <div class="form-group">
-            <label class="btn btn-info" for="post_image">+ Add post image header</label>
+    {% if form.instance.have_post_image %}
+        <div class="col-md-12 blog-post">
+            <div class="post-image">
+                <img src="{% static 'blog/user_files' %}/{{ form.instance.get_post_image.file_name }}" alt="">
+            </div>
         </div>
-    </div>
+        <div class="col-sm-3">
+            <div class="form-group">
+                <label class="btn btn-success" for="post_image">~ Change post image header</label>
+            </div>
+        </div>
+        <div class="col-sm6">
+            <div class="form-group">
+                <a href="{% url 'blog:remove_header_image' form.instance.id %}">
+                    <label class="btn btn-danger">- Remove post image header</label>
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="btn btn-info" for="post_image">+ Add post image header</label>
+            </div>
+        </div>
+    {% endif %}
+
     <a hidden><input type="file" name="{{ image_form.file.html_name }}" id="post_image"></a>
 
     <div class="col-sm-12">
@@ -20,7 +42,7 @@
     <div class="col-sm-12">
         <div class="form-group">
             <textarea required id="{{ form.post_text.html_name }}" name="{{ form.post_text.html_name }}"
-                      class="form-control"
+                      class="form-control" rows="10"
                       placeholder="{{ form.post_text.label }}">{% firstof form.post_text.value %}</textarea>
         </div>
     </div>

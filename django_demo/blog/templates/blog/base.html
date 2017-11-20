@@ -99,11 +99,7 @@
                                 {% block page_content_body %}
                                 {% endblock page_content_body %}
                                 {% block page_content_footer %}
-                                    <div class="col-md-12 text-center">
-                                        <a href="javascript:void(0)" id="load-more-post"
-                                           class="load-more-button">Load</a>
-                                        <div id="post-end-message"></div>
-                                    </div>
+                                    {% include 'blog/_load_button.html' %}
                                 {% endblock page_content_footer %}
                             {% endblock page_content %}
                         </div>

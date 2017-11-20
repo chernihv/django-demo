@@ -43,6 +43,10 @@ class Post(models.Model):
         self.is_removed = True
         self.save()
 
+    def remove_header_image(self):
+        image = self.get_post_image()
+        image()
+
     def have_post_image(self):
         return self.postfile_set.filter(file_type=PostFile.POST_IMAGE, is_removed=False).exists()
 

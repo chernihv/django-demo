@@ -152,6 +152,13 @@ def post_detail(request: HttpRequest, post_id: int):
     return render(request, 'blog/post_detail.html', {'post': post})
 
 
+@decorators.group_require(constants.Group.REGULAR_USER)
+def post_remove_header_image(request: HttpRequest, post_id: int):
+    post = models.Post.get_post_or_404(post_id)
+    post.disable_post_image()
+    return redirect('blog:edit', args=[post_id])
+
+
 def user_detail(request: HttpRequest, user_id: int):
     user = get_object_or_404(User, pk=user_id)
     return render(request, 'blog/user_detail.html', {'user': user})

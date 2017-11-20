@@ -17,3 +17,8 @@
         </div>
     </div>
 {% endblock page_content_body %}
+{% block page_content_footer %}
+    {% if user.post_set.count > 4 %}
+        {% include 'blog/_load_button.html' %}
+    {% endif %}
+{% endblock page_content_footer %}
