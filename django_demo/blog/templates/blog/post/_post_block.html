@@ -4,7 +4,9 @@
 
     {% if post.have_post_image %}
         <div class="post-image">
-            <img src="{% static 'blog/user_files' %}/{{ post.get_post_image.file_name }}" alt="">
+            <a href="{% url 'blog:detail' post.id %}">
+                <img src="{% static 'blog/user_files' %}/{{ post.get_post_image.file_name }}" alt="">
+            </a>
         </div>
     {% endif %}
 
@@ -41,10 +43,18 @@
         </span>
     </div>
     {% if truncatechars %}
-        <p>{{ post.post_text|truncatechars_html:200|code_wrapper|linebreaks }}</p>
+        <p>{{ post.post_text|truncatechars_html:200|linebreaks }}</p>
         <a href="{% url 'blog:detail' post.id %}"
            class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
     {% else %}
-        <p>{{ post.post_text|code_wrapper|linebreaks }}</p>
+        <div>
+            <div class="form-group" id="post_blocks">
+                {{ post.post_text|linebreaks }}
+                {% for block in post.postblock_set.all %}
+                    <hr>
+                    {{ block.storage|linebreaks }}
+                {% endfor %}
+            </div>
+        </div>
     {% endif %}
 </div>

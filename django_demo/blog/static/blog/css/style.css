@@ -1697,7 +1697,13 @@ blockquote {
 	padding-bottom: 200px !important;
 }
 
+.padding-right-5 {
+    padding-right: 5px; !important;
+}
 
+.padding-left-5 {
+    padding-left: 5px; !important;
+}
 
 /* Colors */
 

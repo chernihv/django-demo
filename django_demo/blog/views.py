@@ -87,7 +87,6 @@ def hide_question(request: HttpRequest, question_id: int):
     return redirect('blog:new_question')
 
 
-# TODO Сделать загрузку нескольких изображений с возможностью встраивать их в текст.
 @decorators.group_require(constants.Group.REGULAR_USER)
 def post_create(request: HttpRequest):
     if is_post(request):
@@ -118,6 +117,7 @@ def post_edit(request: HttpRequest, post_id: int):
     image_form = forms.PostFileForm()
     if request.user.id == post.user_id:
         if is_post(request):
+            # raise FileExistsError(request.POST.getlist('title'))
             form = forms.PostForm(request.POST, instance=post)
             image_form = forms.PostFileForm(request.POST, request.FILES)
             if form.is_valid():

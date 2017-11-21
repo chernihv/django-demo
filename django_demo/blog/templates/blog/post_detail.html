@@ -8,6 +8,7 @@
 
 {% endblock page_content %}
 {% block extend_content_block %}
+
     <div class="col-md-12 page-body margin-top-50 extend-body-block" style="padding-top: 0px">
 
         <h3>Comments</h3>
@@ -15,8 +16,8 @@
         <div class="col-md-12">
 
             {% for comment in post.get_valid_comments %}
-                {% include 'blog/post/_post_comment_block.html' with comment=comment request=request %}
                 <hr>
+                {% include 'blog/post/_post_comment_block.html' with comment=comment request=request %}
             {% endfor %}
             <hr>
             {% include 'blog/post/_post_comment_form.html' with post=post request=request %}

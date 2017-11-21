@@ -39,9 +39,8 @@ class Post(models.Model):
     def get_post_or_404(post_id: int):
         return get_object_or_404(Post, pk=post_id, is_removed=False)
 
-    @staticmethod
-    def get_valid_comments():
-        return PostComment.get_valid_comments()
+    def get_valid_comments(self):
+        return PostComment.get_valid_comments(self.id)
 
     def remove_post(self):
         self.is_removed = True
@@ -101,8 +100,8 @@ class PostComment(models.Model):
     is_removed = models.BooleanField(default=False)
 
     @staticmethod
-    def get_valid_comments():
-        return PostComment.objects.filter(is_removed=False)
+    def get_valid_comments(post_id=None):
+        return PostComment.objects.filter(is_removed=False, post_id=post_id)
 
     def hide_comment(self):
         self.is_removed = True
@@ -124,7 +123,11 @@ class PostQuestion(models.Model):
 class PostQuestionChoice(models.Model):
     question = models.ForeignKey(PostQuestion, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=150)
-    choice_votes = models.IntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    @staticmethod
+    def count_choices(question: int):
+        return PostQuestionChoice.objects.filter(question=question)
 
     def __str__(self):
         return "{id} | {ques} : {text}".format(id=self.id, ques=self.question.question_text, text=self.choice_text)
