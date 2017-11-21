@@ -1,0 +1,14 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        {{ comment.comment_text }}
+    </div>
+    <div class="panel-footer">
+        {{ comment.created_at|date }} {{ comment.created_at|time }} / by <a
+            href="{% url 'blog:user' comment.user_id %}" class="">{{ comment.user.username }}</a>
+        {% if request.user.is_superuser %}
+            (
+            <a href="{% url 'blog:post_comment_hide' comment.id %}">Hide</a>
+            )
+        {% endif %}
+    </div>
+</div>

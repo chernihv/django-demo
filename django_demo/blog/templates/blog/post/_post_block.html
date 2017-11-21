@@ -13,14 +13,14 @@
     </div>
     <div class="post-info">
         <span>
-            {{ post.created_at|date }} / by <a
+            {{ post.created_at|date }} {{ post.created_at|time }} / by <a
                 href="{% url 'blog:user' post.user.id %}">{{ post.user.username }}</a>
             {% if request.user.id == post.user_id %}
                 (
                 <a href="{% url 'blog:edit' post.id %}">Edit</a>
                 /
-                <a data-toggle="modal" href="#modal-id">Delete</a>
-                <div class="modal fade" id="modal-id">
+                <a data-toggle="modal" href="#delete-post-modal">Delete</a>
+                <div class="modal fade" id="delete-post-modal">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">

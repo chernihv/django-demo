@@ -5,13 +5,13 @@
 
     {% for post in posts %}
 
-        {% include 'blog/_post_block.html' with post=post request=request truncatechars=True %}
+        {% include 'blog/post/_post_block.html' with post=post request=request truncatechars=True %}
 
     {% endfor %}
 
 {% endblock page_content_body %}
 {% block page_content_footer %}
     {% if posts|length > 4 %}
-        {% include 'blog/_load_button.html' %}
+        {% include 'blog/post/_load_button.html' %}
     {% endif %}
 {% endblock page_content_footer %}

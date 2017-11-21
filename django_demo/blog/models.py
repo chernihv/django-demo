@@ -39,13 +39,13 @@ class Post(models.Model):
     def get_post_or_404(post_id: int):
         return get_object_or_404(Post, pk=post_id, is_removed=False)
 
+    @staticmethod
+    def get_valid_comments():
+        return PostComment.get_valid_comments()
+
     def remove_post(self):
         self.is_removed = True
         self.save()
-
-    def remove_header_image(self):
-        image = self.get_post_image()
-        image()
 
     def have_post_image(self):
         return self.postfile_set.filter(file_type=PostFile.POST_IMAGE, is_removed=False).exists()
@@ -98,6 +98,15 @@ class PostComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment_text = models.CharField(max_length=500)
     created_at = models.DateTimeField()
+    is_removed = models.BooleanField(default=False)
+
+    @staticmethod
+    def get_valid_comments():
+        return PostComment.objects.filter(is_removed=False)
+
+    def hide_comment(self):
+        self.is_removed = True
+        self.save()
 
     def __str__(self):
         return "{id} | {user} : {text}".format(id=self.id, user=self.user.username, text=self.comment_text)

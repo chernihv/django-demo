@@ -4,10 +4,25 @@
 {% block page_title %}{{ post.title }}{% endblock page_title %}
 {% block page_content %}
 
-    {% include 'blog/_post_block.html' with truncatechars=Fale post=post request=request %}
-
-    {% for comment in post.postcomment_set %}
-
-    {% endfor %}
+    {% include 'blog/post/_post_block.html' with truncatechars=Fale post=post request=request %}
 
 {% endblock page_content %}
+{% block extend_content_block %}
+    <div class="col-md-12 page-body margin-top-50 extend-body-block" style="padding-top: 0px">
+
+        <h3>Comments</h3>
+
+        <div class="col-md-12">
+
+            {% for comment in post.get_valid_comments %}
+                {% include 'blog/post/_post_comment_block.html' with comment=comment request=request %}
+                <hr>
+            {% endfor %}
+            <hr>
+            {% include 'blog/post/_post_comment_form.html' with post=post request=request %}
+
+        </div>
+
+    </div>
+
+{% endblock extend_content_block %}

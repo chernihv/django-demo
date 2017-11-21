@@ -158,6 +158,22 @@ def post_remove_header_image(request: HttpRequest, post_id: int):
     return redirect('blog:edit', args=[post_id])
 
 
+@decorators.group_require(constants.Group.REGULAR_USER)
+def post_comment(request: HttpRequest, post_id: int):
+    if is_post(request):
+        comment_text = request.POST['post_comment']
+        models.PostComment(post_id=post_id, comment_text=comment_text, created_at=timezone.now(),
+                           user_id=request.user.id).save()
+        return redirect('blog:detail', args=[post_id])
+
+
+@decorators.group_require(constants.Group.REGULAR_USER)
+def post_comment_hide(request: HttpRequest, comment_id: int):
+    comment = get_object_or_404(models.PostComment, pk=comment_id)
+    comment.hide_comment()
+    return redirect('blog:detail', args=[comment.post_id])
+
+
 def user_detail(request: HttpRequest, user_id: int):
     user = get_object_or_404(User, pk=user_id)
     return render(request, 'blog/user_detail.html', {'user': user})
