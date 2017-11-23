@@ -95,7 +95,7 @@
                         <span class="label label-pill label-danger margin-bottom-10">remove</span>
                     </a>
                     {% if block.block_type == 'block_text' %}
-                        <div class="margin-top-10">{{ block.storage|linebreaks }}</div>
+                        <div class="margin-top-10">{{ block.storage|linebreaks|urlize }}</div>
                     {% elif block.block_type == 'block_image' %}
                         <div class="blog-post margin-top-10">
                             <div class="post-image">

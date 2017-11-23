@@ -51,11 +51,11 @@
     {% else %}
         <div>
             <div class="form-group" id="post_blocks">
-                {{ post.post_text|linebreaks }}
+                {{ post.post_text|linebreaks|urlize }}
                 {% for block in post.get_all_blocks %}
                     <hr>
                     {% if block.block_type == 'block_text' %}
-                        {{ block.storage|linebreaks }}
+                        {{ block.storage|linebreaks|urlize }}
                     {% elif block.block_type == 'block_image' %}
                         <div class="blog-post">
                             <div class="post-image">
