@@ -72,6 +72,9 @@ function Application() {
                 }
             });
         });
+        $(document).on('click', '.remove-block', function (event) {
+            return confirm('Remove block?');
+        });
     };
 
     this.ready_log = function () {

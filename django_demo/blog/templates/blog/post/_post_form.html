@@ -90,17 +90,20 @@
             </textarea>
             {% if form.instance.have_post_block %}
                 {% for block in form.instance.get_all_blocks %}
-                    <hr>
+                    <hr class="margin-bottom-10">
+                    <a href="{% url 'blog:block_delete' form.instance.id block.id %}" class="remove-block">
+                        <span class="label label-pill label-danger margin-bottom-10">remove</span>
+                    </a>
                     {% if block.block_type == 'block_text' %}
-                        {{ block.storage|linebreaks }}
+                        <div class="margin-top-10">{{ block.storage|linebreaks }}</div>
                     {% elif block.block_type == 'block_image' %}
-                        <div class="blog-post">
+                        <div class="blog-post margin-top-10">
                             <div class="post-image">
                                 <img src="{% static 'blog/user_files' %}/{{ block.storage }}">
                             </div>
                         </div>
                     {% elif block.block_type == 'block_code' %}
-                        <pre>{{ block.storage }}</pre>
+                        <pre class="margin-top-10">{{ block.storage }}</pre>
                     {% endif %}
                 {% endfor %}
             {% endif %}

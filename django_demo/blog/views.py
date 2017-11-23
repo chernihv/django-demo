@@ -147,6 +147,15 @@ def post_delete(request: HttpRequest, post_id: int):
         return HttpResponseForbidden()
 
 
+def block_delete(request: HttpRequest, post_id: int, block_id: int):
+    post = models.Post.get_post_or_404(post_id)
+    if request.user.id == post.user_id:
+        models.PostBlock.get_block_or_404(block_id).hide()
+        return redirect('blog:edit', args=[post.id])
+    else:
+        return HttpResponseForbidden()
+
+
 def post_detail(request: HttpRequest, post_id: int):
     post = models.Post.get_post_or_404(post_id)
     return render(request, 'blog/post_detail.html', {'post': post})

@@ -76,6 +76,14 @@ class PostBlock(models.Model):
     storage = models.CharField(max_length=1500)
     is_removed = models.BooleanField(default=False)
 
+    @staticmethod
+    def get_block_or_404(block_id):
+        return get_object_or_404(PostBlock, pk=block_id, is_removed=False)
+
+    def hide(self):
+        self.is_removed = True
+        self.save()
+
 
 class PostFile(models.Model):
     POST_IMAGE = 'post_image'
