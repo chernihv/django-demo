@@ -1,5 +1,5 @@
 {% load staticfiles %}
-<form method="post" enctype="multipart/form-data" action="">
+<form method="post" enctype="multipart/form-data" action="" id="form">
 
     {% csrf_token %}
     {% if form.instance.have_post_image %}
@@ -44,22 +44,23 @@
     <div class="col-sm-12" style="padding-left: 5px">
         <div class="col-sm-3 margin-top-10 padding-right-5" style="width: auto; padding-left: 10px">
             <div class="form-group margin-bottom-10">
-                <a class="btn btn-primary" onclick="add_image_block()">Add image block</a>
+                <a class="btn btn-primary" id="add_image_block_button">Add image block</a>
             </div>
         </div>
         <div class="col-sm-3 margin-top-10 padding-right-5" style="width: auto;">
             <div class="form-group margin-bottom-10">
-                <a class="btn btn-primary" onclick="add_code_block()">Add code block</a>
+                <a class="btn btn-primary" id="add_code_block_button">Add code block</a>
             </div>
         </div>
+        {# Questoin block #}
+        {#        <div class="col-sm-3 margin-top-10 padding-right-5" style="width: auto;">#}
+        {#            <div class="form-group margin-bottom-10">#}
+        {#                <a class="btn btn-primary" onclick="add_question_block()">Add question block</a>#}
+        {#            </div>#}
+        {#        </div>#}
         <div class="col-sm-3 margin-top-10 padding-right-5" style="width: auto;">
             <div class="form-group margin-bottom-10">
-                <a class="btn btn-primary" onclick="add_question_block()">Add question block</a>
-            </div>
-        </div>
-        <div class="col-sm-3 margin-top-10 padding-right-5" style="width: auto;">
-            <div class="form-group margin-bottom-10">
-                <a class="btn btn-primary" onclick="add_text_block()">Add text block</a>
+                <a class="btn btn-primary" id="add_text_block_button">Add text block</a>
             </div>
         </div>
     </div>
@@ -87,11 +88,27 @@
                       class="form-control" rows="10" title="Post text, first block"
                       placeholder="{{ form.post_text.label }}">{% firstof form.post_text.value %}
             </textarea>
+            {% if form.instance.have_post_block %}
+                {% for block in form.instance.get_all_blocks %}
+                    <hr>
+                    {% if block.block_type == 'block_text' %}
+                        {{ block.storage|linebreaks }}
+                    {% elif block.block_type == 'block_image' %}
+                        <div class="blog-post">
+                            <div class="post-image">
+                                <img src="{% static 'blog/user_files' %}/{{ block.storage }}">
+                            </div>
+                        </div>
+                    {% elif block.block_type == 'block_code' %}
+                        <pre>{{ block.storage }}</pre>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
 
-    <div class="text-center">
-        <button type="submit" class="load-more-button">Save</button>
+    <div class="text-center" id="send_form_button">
+        <button type="button" class="load-more-button">Save</button>
     </div>
 
 </form>

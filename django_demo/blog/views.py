@@ -1,15 +1,15 @@
 from django.contrib import auth, messages
 from django.contrib.auth.models import User
-from django.http import HttpRequest, HttpResponseForbidden
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
+from django.shortcuts import render, get_object_or_404, resolve_url
 from django.utils import timezone
 
 from . import decorators
 from . import forms
 from . import models
 from . import constants
-from .helpers import (redirect, is_post, go_home, get_client_ip,
-                      get_fields_request, save_file, get_valid_name)
+from .helpers import (redirect, is_post, go_home, get_client_ip, get_fields_request, save_file, get_valid_name)
+from . import services
 
 
 def index(request: HttpRequest):
@@ -97,13 +97,14 @@ def post_create(request: HttpRequest):
             post.created_at = timezone.now()
             post.user = request.user
             post.save()
+            services.unpack_and_save_all_blocks(request, post.id)
             if image_form.is_valid():
                 file = request.FILES['file']
                 saved_name = get_valid_name(file)
                 save_file(file, saved_name)
                 models.PostFile(post_id=post.id, file_type=models.PostFile.POST_IMAGE,
                                 file_name=saved_name, created_at=timezone.now()).save()
-            return redirect('blog:detail', args=[post.id])
+            return JsonResponse({'redirect': resolve_url('blog:detail', post.id)})
     else:
         form = forms.PostForm()
         image_form = forms.PostFileForm()
@@ -117,11 +118,11 @@ def post_edit(request: HttpRequest, post_id: int):
     image_form = forms.PostFileForm()
     if request.user.id == post.user_id:
         if is_post(request):
-            # raise FileExistsError(request.POST.getlist('title'))
             form = forms.PostForm(request.POST, instance=post)
             image_form = forms.PostFileForm(request.POST, request.FILES)
             if form.is_valid():
                 form.save()
+                services.unpack_and_save_all_blocks(request, post_id)
                 if image_form.is_valid():
                     post.disable_post_image()
                     file = request.FILES['file']
@@ -129,7 +130,7 @@ def post_edit(request: HttpRequest, post_id: int):
                     save_file(file, saved_name)
                     models.PostFile(post_id=post.id, file_type=models.PostFile.POST_IMAGE,
                                     file_name=saved_name, created_at=timezone.now()).save()
-            return redirect('blog:detail', args=[post.id])
+            return JsonResponse({'redirect': resolve_url('blog:detail', post.id)})
         else:
             return render(request, 'blog/post_edit.html', {'form': form, 'image_form': image_form})
     else:

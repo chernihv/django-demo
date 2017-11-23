@@ -20,8 +20,6 @@ def add_regular_user_group():
         models.Feedback,
         models.PostFile,
         models.PostComment,
-        models.PostQuestion,
-        models.PostQuestionChoice,
     ]
 
     def get_permissions(models_list):

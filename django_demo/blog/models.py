@@ -2,8 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
-from . import helpers
-
 
 class Feedback(models.Model):
     name = models.CharField(max_length=50, help_text='Ваше имя')
@@ -42,12 +40,18 @@ class Post(models.Model):
     def get_valid_comments(self):
         return PostComment.get_valid_comments(self.id)
 
+    def get_all_blocks(self):
+        return PostBlock.objects.filter(post_id=self.id, is_removed=False).order_by('pk')
+
     def remove_post(self):
         self.is_removed = True
         self.save()
 
     def have_post_image(self):
         return self.postfile_set.filter(file_type=PostFile.POST_IMAGE, is_removed=False).exists()
+
+    def have_post_block(self):
+        return self.postblock_set.filter(is_removed=False).exists()
 
     def get_post_image(self):
         return self.postfile_set.filter(file_type=PostFile.POST_IMAGE, is_removed=False).first()
@@ -66,11 +70,11 @@ class PostBlock(models.Model):
     BLOCK_IMAGE = 'block_image'
     BLOCK_CODE = 'block_code'
     BLOCK_TEXT = 'block_text'
-    BLOCK_QUESTION = 'block_question'
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     block_type = models.CharField(max_length=50)
     storage = models.CharField(max_length=1500)
+    is_removed = models.BooleanField(default=False)
 
 
 class PostFile(models.Model):
@@ -86,10 +90,6 @@ class PostFile(models.Model):
 
     def __str__(self):
         return "{id} | {type} : {filename}".format(id=self.id, type=self.file_type, filename=self.file_name)
-
-    def delete(self, *args, **kwargs):
-        helpers.delete_file(self.file_name)
-        super(PostFile, self).delete(*args, **kwargs)
 
 
 class PostComment(models.Model):
@@ -109,25 +109,3 @@ class PostComment(models.Model):
 
     def __str__(self):
         return "{id} | {user} : {text}".format(id=self.id, user=self.user.username, text=self.comment_text)
-
-
-class PostQuestion(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    block = models.ForeignKey(PostBlock, on_delete=models.CASCADE)
-    question_text = models.CharField(max_length=500)
-
-    def __str__(self):
-        return "{id} | {post_title} : {text}".format(id=self.id, post_title=self.post.title, text=self.question_text)
-
-
-class PostQuestionChoice(models.Model):
-    question = models.ForeignKey(PostQuestion, on_delete=models.CASCADE)
-    choice_text = models.CharField(max_length=150)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    @staticmethod
-    def count_choices(question: int):
-        return PostQuestionChoice.objects.filter(question=question)
-
-    def __str__(self):
-        return "{id} | {ques} : {text}".format(id=self.id, ques=self.question.question_text, text=self.choice_text)

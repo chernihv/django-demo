@@ -1,23 +1,12 @@
-{% extends 'blog/base.html' %}
-{% load staticfiles %}
-{% block page_title %}Create Post{% endblock page_title %}
-{% block page_content %}
-
+{% extends 'blog/post_edit_block.html' %}
+{% block page_title %}Create post{% endblock page_title %}
+{% block post_title %}
     <div class="post-title">
         <h1>Create <span class="main-color">Post</span></h1>
     </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="row">
-
-                {% include 'blog/post/_post_form.html' with form=form image_form=image_form %}
-
-            </div>
-        </div>
-    </div>
-
-{% endblock page_content %}
-{% block custom_javascripts %}
-    <script type="text/javascript" src="{% static 'blog/js/post_form.js' %}"></script>
-{% endblock custom_javascripts %}
+{% endblock post_title %}
+{% block js_constants_extends %}
+    <script>
+        const ACTION_URL = '{% url 'blog:create' %}'
+    </script>
+{% endblock js_constants_extends %}

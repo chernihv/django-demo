@@ -1,0 +1,30 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% block page_content %}
+
+    {% block post_title %}
+    {% endblock post_title %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+
+                {% include 'blog/post/_post_form.html' with form=form image_form=image_form %}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock page_content %}
+{% block custom_javascripts %}
+    {# Include constants for JS #}
+    {% block js_constants_common %}
+        <script>
+            const CSRF_TOKEN = '{{ csrf_token }}';
+            const POST_ID = '{{ form.instance.id }}';
+        </script>
+    {% endblock js_constants_common %}
+    {% block js_constants_extends %}
+    {% endblock js_constants_extends %}
+    <script type="text/javascript" src="{% static 'blog/js/post_form.js' %}"></script>
+{% endblock custom_javascripts %}

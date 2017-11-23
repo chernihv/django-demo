@@ -21,8 +21,8 @@
                 (
                 <a href="{% url 'blog:edit' post.id %}">Edit</a>
                 /
-                <a data-toggle="modal" href="#delete-post-modal">Delete</a>
-                <div class="modal fade" id="delete-post-modal">
+                <a data-toggle="modal" href="#delete-post-modal-{{ post.id }}">Delete</a>
+                <div class="modal fade" id="delete-post-modal-{{ post.id }}">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -42,19 +42,32 @@
             {% endif %}
         </span>
     </div>
+
     {% if truncatechars %}
         <p>{{ post.post_text|truncatechars_html:200|linebreaks }}</p>
         <a href="{% url 'blog:detail' post.id %}"
            class="button button-style button-anim fa fa-long-arrow-right"><span>Read More</span></a>
+        <hr>
     {% else %}
         <div>
             <div class="form-group" id="post_blocks">
                 {{ post.post_text|linebreaks }}
-                {% for block in post.postblock_set.all %}
+                {% for block in post.get_all_blocks %}
                     <hr>
-                    {{ block.storage|linebreaks }}
+                    {% if block.block_type == 'block_text' %}
+                        {{ block.storage|linebreaks }}
+                    {% elif block.block_type == 'block_image' %}
+                        <div class="blog-post">
+                            <div class="post-image">
+                                <img src="{% static 'blog/user_files' %}/{{ block.storage }}">
+                            </div>
+                        </div>
+                    {% elif block.block_type == 'block_code' %}
+                        <pre>{{ block.storage }}</pre>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
     {% endif %}
+
 </div>
