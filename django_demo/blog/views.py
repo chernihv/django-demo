@@ -59,7 +59,8 @@ def user_profile(request: HttpRequest):
 
 @decorators.auth_only
 def change_password_user(request: HttpRequest):
-    return go_home()
+    messages.add_message(request, messages.INFO, 'You can not change the password')
+    return render(request, 'blog/reset_password.html')
 
 
 def contact(request: HttpRequest):
@@ -178,7 +179,7 @@ def post_comment(request: HttpRequest, post_id: int):
         return redirect('blog:detail', args=[post_id])
 
 
-@decorators.group_require(constants.Group.REGULAR_USER)
+@decorators.superuser_only
 def post_comment_hide(request: HttpRequest, comment_id: int):
     comment = get_object_or_404(models.PostComment, pk=comment_id)
     comment.hide_comment()
