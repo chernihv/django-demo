@@ -78,7 +78,7 @@ function Application() {
     };
 
     this.ready_log = function () {
-        console.log('App ready');
+        console.log('Constructor ready');
         console.log('Post ID: ' + POST_ID);
     };
 }

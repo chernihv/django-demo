@@ -1,5 +1,5 @@
 from django.contrib import auth, messages
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.http import HttpRequest, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, resolve_url
 from django.utils import timezone
@@ -42,6 +42,7 @@ def user_registration(request: HttpRequest):
         if form.is_valid():
             username, password, email = get_fields_request(request, 'username', 'password', 'email')
             user = User.objects.create_user(username=username, password=password, email=email)
+            user.groups.add(Group.objects.get(name=constants.Group.REGULAR_USER))
             auth.login(request, user)
             return go_home()
         else:
