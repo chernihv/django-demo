@@ -43,14 +43,14 @@ def get_fields_request(request, *args):
     result = []
     for field in args:
         result.append(request.POST[field])
-    return (*result,)
+    return result
 
 
 def get_list_fields_request(request, *args):
     result = []
     for fields in args:
         result.append(request.POST.getlist(key=fields))
-    return (*result,)
+    return result
 
 
 def is_post(request: HttpRequest):
