@@ -68,6 +68,16 @@ def post_delete(request, post_id: int):
 
 
 @decorators.group_require(constants.Group.REGULAR_USER)
+def publish_post(request, post_id: int):
+    post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
+    if request.user.id != post.user_id:
+        return HttpResponseForbidden()
+    models.PostBlock.publish_all_blocks(post_id)
+    post.publish_post()
+    return JsonResponse({'redirect': resolve_url('blog:detail', post_id)})
+
+
+@decorators.group_require(constants.Group.REGULAR_USER)
 def block_create(request, post_id: int):
     post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
     if request.user.id != post.user_id:
@@ -87,7 +97,7 @@ def block_create(request, post_id: int):
 
 @decorators.group_require(constants.Group.REGULAR_USER)
 def block_save(request, post_id: int):
-    post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
+    post = models.Post.get_post_or_404(post_id)
     if request.user.id != post.user_id:
         return HttpResponseForbidden()
     block_id = request.POST.get('block_id')
@@ -99,7 +109,7 @@ def block_save(request, post_id: int):
 
 @decorators.group_require(constants.Group.REGULAR_USER)
 def block_delete(request, post_id: int):
-    post = get_object_or_404(models.Post, user_id=request.user.id, pk=post_id, is_removed=False)
+    post = models.Post.get_post_or_404(post_id)
     if request.user.id == post.user_id:
         block_id = request.POST.get('block_id')
         models.PostBlock.get_block_or_404(block_id).hide()

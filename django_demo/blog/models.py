@@ -46,7 +46,7 @@ class Post(models.Model):
 
     @staticmethod
     def get_post_or_404(post_id: int):
-        return get_object_or_404(Post, pk=post_id, is_removed=False, is_published=True)
+        return get_object_or_404(Post, pk=post_id, is_removed=False)
 
     def get_valid_comments(self):
         return PostComment.get_valid_comments(self.id)
@@ -54,8 +54,12 @@ class Post(models.Model):
     def get_all_blocks(self):
         return PostBlock.get_all_valid_blocks(self.id).order_by('pk')
 
-    def get_unpublished_blocs(self):
+    def get_unpublished_blocks(self):
         return PostBlock.get_unpublished_blocks(self.id).order_by('pk')
+
+    def publish_post(self):
+        self.is_published = True
+        self.save()
 
     def remove_post(self):
         self.is_removed = True
@@ -102,6 +106,11 @@ class PostBlock(models.Model):
     @staticmethod
     def get_unpublished_blocks(post_id: int):
         return PostBlock.objects.filter(post_id=post_id, is_removed=False, is_published=False)
+
+    @staticmethod
+    def publish_all_blocks(post_id):
+        blocks = PostBlock.get_unpublished_blocks(post_id)
+        blocks.update(is_published=True)
 
     def hide(self):
         self.is_removed = True

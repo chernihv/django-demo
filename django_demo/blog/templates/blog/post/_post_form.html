@@ -97,7 +97,7 @@
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                     <strong>Below is unpublished blocks</strong>
                 </div>
-                {% for block in form.instance.get_unpublished_blocs %}
+                {% for block in form.instance.get_unpublished_blocks %}
                     {% include 'blog/post/_block_for_post.html' with block=block %}
                 {% endfor %}
             {% endif %}

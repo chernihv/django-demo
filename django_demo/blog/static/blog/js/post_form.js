@@ -10,6 +10,10 @@ let POST_CONTENT_BLOCKS = '#post_blocks';
 let POST_TITLE_INPUT = '#title';
 let POST_TEXT_INPUT = '#post_text';
 
+let ADD_CODE_BLOCK_BUTTON = '#add_code_block_button';
+let ADD_TEXT_BLOCK_BUTTON = '#add_text_block_button';
+let ADD_IMAGE_BLOCK_BUTTON = '#add_image_block_button';
+
 let REMOVE_BLOCK_BUTTON = '.remove-block';
 let SAVE_BLOCK_BUTTON = '.save-block';
 
@@ -65,7 +69,7 @@ class EventHandlers {
     }
 
     image_block_button() {
-        $(document).on('click', '#add_image_block_button', function () {
+        $(document).on('click', ADD_IMAGE_BLOCK_BUTTON, function () {
             app.post_constructor.add_image_block();
         });
         $(document).on('change', '[name=' + IMAGE_BLOCKS + ']', function (event) {
@@ -75,28 +79,21 @@ class EventHandlers {
     }
 
     code_block_button() {
-        $(document).on('click', '#add_code_block_button', function () {
-            app.post_constructor.add_code_block();
+        $(document).on('click', ADD_CODE_BLOCK_BUTTON, function () {
+            Helpers.request_create_new_block(CODE_BLOCKS, PostConstructor.add_code_block);
         });
     }
 
     text_block_button() {
-        $(document).on('click', '#add_text_block_button', function () {
+        $(document).on('click', ADD_TEXT_BLOCK_BUTTON, function () {
             Helpers.request_create_new_block(TEXT_BLOCKS, PostConstructor.add_text_block);
         });
     }
 
     send_form() {
         $(document).on('click', '#send_form_button', function (event) {
-            $.ajax({
-                type: 'POST',
-                url: ACTION_URL,
-                data: app.helper.get_form_data(),
-                processData: false,
-                contentType: false,
-                success: function (response_data) {
-                    window.location = response_data['redirect'];
-                }
+            $.post(PUBLISH_POST, {'post_id': POST_ID, csrfmiddlewaretoken: CSRF_TOKEN}, function (data) {
+                window.location = data['redirect']
             });
         });
     }
@@ -111,7 +108,7 @@ class EventHandlers {
     }
 
     save_created_block() {
-        $(document).on('click', SAVE_BLOCK_BUTTON, function (event) {
+        function send_changes(event) {
             let block_id = $(event.target).attr('block_id');
             let value = $('textarea[block_id=' + block_id + ']').val();
             $.post(SAVE_BLOCK_ACTION, {
@@ -121,7 +118,10 @@ class EventHandlers {
             }, function (data) {
 
             });
-        });
+        }
+
+        $(document).on('click', SAVE_BLOCK_BUTTON, send_changes);
+        $(document).on('change', 'textarea[block_id]', send_changes);
     }
 }
 
@@ -197,33 +197,17 @@ class PostConstructor {
         input.click();
     };
 
-    add_code_block() {
-        let code_block = $("<textarea required placeholder='Code block'></textarea>");
-        let original = $(POST_CONTENT_BLOCKS + ' textarea').first();
-        code_block.addClass(original.attr('class'));
-        code_block.attr('name', CODE_BLOCKS);
-        code_block.attr('rows', original.attr('rows'));
-
-
-        $(POST_CONTENT_BLOCKS).append(this.create_hr());
-        $(POST_CONTENT_BLOCKS).append(code_block);
-        if (!this.is_have_first_block_code) {
-            let alert_block = this.create_bootstrap_alert('Text in this area wrap in special code tags');
-            $(POST_CONTENT_BLOCKS).append(alert_block);
-            this.is_have_first_block_code = true;
-        }
-    };
-
     static add_text_block(data) {
 
         let block_id = PostConstructor.get_block_id(data);
         let text_block = $("<textarea required></textarea>");
         let original = app.post_constructor_original_textinput;
 
-        let labels = PostConstructor.create_labels(PostConstructor.get_block_id(data), data['block_type']);
+        let labels = PostConstructor.create_labels(block_id, data['block_type']);
 
         PostConstructor.add_block_id(text_block, block_id);
         text_block.addClass(original.attr('class'));
+        text_block.addClass('margin-top-10');
         text_block.attr('name', TEXT_BLOCKS);
         text_block.attr('rows', original.attr('rows'));
         text_block.attr('placeholder', original.attr('placeholder'));
@@ -238,6 +222,29 @@ class PostConstructor {
         $(POST_CONTENT_BLOCKS).append(wrapper);
     };
 
+    static add_code_block(data) {
+        let block_id = PostConstructor.get_block_id(data);
+        let code_block = $("<textarea required placeholder='Code block'></textarea>");
+        let original = $(POST_CONTENT_BLOCKS + ' textarea').first();
+        code_block.addClass(original.attr('class'));
+        PostConstructor.add_block_id(code_block, block_id);
+        code_block.attr('name', CODE_BLOCKS);
+        code_block.attr('rows', original.attr('rows'));
+
+        let wrapper = $("<div></div>");
+        PostConstructor.add_block_id(wrapper, block_id);
+        wrapper.append(PostConstructor.create_hr());
+        wrapper.append(PostConstructor.create_labels(block_id, data['block_type']));
+        wrapper.append(code_block);
+
+        $(POST_CONTENT_BLOCKS).append(wrapper);
+        if (!app.post_constructor.is_have_first_block_code) {
+            let alert_block = PostConstructor.create_bootstrap_alert('Text in this area wrap in special code tags');
+            $(POST_CONTENT_BLOCKS).append(alert_block);
+            app.post_constructor.is_have_first_block_code = true;
+        }
+    };
+
     static add_block_id(object, block_id) {
         $(object).attr('block_id', block_id);
     };
@@ -246,17 +253,21 @@ class PostConstructor {
         return data['block_id'];
     };
 
-    static create_labels(block_id, block_type) {
+    static create_labels(block_id, block_type, append_save_button = true) {
         let first_label = $('<span class="label label-info margin-bottom-10">Type: ' + block_type + '</span>');
         let second_label = $('<span class="label label-pill label-danger margin-bottom-10 remove-block">remove</span>');
         PostConstructor.add_block_id(second_label, block_id);
-        let third_label = $('<span class="label label-success margin-bottom-10 save-block">save changes</span>');
-        PostConstructor.add_block_id(third_label, block_id);
 
         let wrapper = $("<div></div>");
         wrapper.append(first_label);
         wrapper.append(second_label);
-        wrapper.append(third_label);
+
+        if (append_save_button) {
+            let third_label = $('<span class="label label-success margin-bottom-10 save-block">save changes</span>');
+            PostConstructor.add_block_id(third_label, block_id);
+            wrapper.append(third_label);
+        }
+
         return wrapper;
     };
 

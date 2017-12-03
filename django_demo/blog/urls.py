@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^post/(?P<post_id>[0-9]+)/comment/$', post_views.post_comment, name='post_comment'),
     url(r'^post/comment/(?P<comment_id>[0-9]+)/hide/$', post_views.post_comment_hide, name='post_comment_hide'),
 
-    url(r'^post/(?P<post_id>[0-9]+)/publish/$', post_views.block_save, name='post_publish'),
+    url(r'^post/(?P<post_id>[0-9]+)/publish/$', post_views.publish_post, name='post_publish'),
 
     url(r'^post/(?P<post_id>[0-9]+)/block/$', post_views.block_create, name='block_create'),
     url(r'^post/(?P<post_id>[0-9]+)/block/save/$', post_views.block_save, name='block_save'),
