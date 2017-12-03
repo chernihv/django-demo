@@ -51,7 +51,7 @@ class EventHandlers {
         this.question_block_button();
         this.image_block_button();
         this.code_block_button();
-        this.test_block_button();
+        this.text_block_button();
         this.remove_created_block();
         this.send_form();
     }
@@ -87,7 +87,7 @@ class EventHandlers {
         });
     }
 
-    test_block_button() {
+    text_block_button() {
         $(document).on('click', '#add_text_block_button', function () {
             app.post_constructor.add_text_block();
         });
@@ -113,7 +113,6 @@ class EventHandlers {
             return confirm('Remove block?');
         });
     }
-
 }
 
 class Helpers {

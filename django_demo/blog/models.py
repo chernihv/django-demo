@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 
 class Feedback(models.Model):
@@ -24,24 +25,34 @@ class Feedback(models.Model):
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=50)
-    post_text = models.CharField(max_length=5000)
+    title = models.CharField(max_length=50, null=True)
+    post_text = models.CharField(max_length=5000, null=True)
     created_at = models.DateTimeField()
     is_removed = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=True)
+
+    @staticmethod
+    def get_post_or_create(user_id: int):
+        try:
+            post = Post.objects.get(user_id=user_id, is_published=False, is_removed=False)
+        except Post.DoesNotExist:
+            post = Post(user_id=user_id, is_published=False, created_at=timezone.now())
+            post.save()
+        return post
 
     @staticmethod
     def get_all_active_posts():
-        return Post.objects.filter(is_removed=False).order_by('-created_at')
+        return Post.objects.filter(is_removed=False, is_published=True).order_by('-created_at')
 
     @staticmethod
     def get_post_or_404(post_id: int):
-        return get_object_or_404(Post, pk=post_id, is_removed=False)
+        return get_object_or_404(Post, pk=post_id, is_removed=False, is_published=True)
 
     def get_valid_comments(self):
         return PostComment.get_valid_comments(self.id)
 
     def get_all_blocks(self):
-        return PostBlock.objects.filter(post_id=self.id, is_removed=False).order_by('pk')
+        return PostBlock.get_all_valid_blocks(self.id).order_by('pk')
 
     def remove_post(self):
         self.is_removed = True
@@ -54,7 +65,7 @@ class Post(models.Model):
         return self.postblock_set.filter(is_removed=False).exists()
 
     def get_post_image(self):
-        return self.postfile_set.filter(file_type=PostFile.POST_IMAGE, is_removed=False).first()
+        return self.postfile_set.get(file_type=PostFile.POST_IMAGE, is_removed=False)
 
     def disable_post_image(self):
         post_image = self.get_post_image()
@@ -73,12 +84,17 @@ class PostBlock(models.Model):
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     block_type = models.CharField(max_length=50)
-    storage = models.CharField(max_length=1500)
+    storage = models.CharField(max_length=1500, null=True)
     is_removed = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=True)
+
+    @staticmethod
+    def get_all_valid_blocks(post_id: int):
+        return PostBlock.objects.filter(post_id=post_id, is_removed=False, is_published=True)
 
     @staticmethod
     def get_block_or_404(block_id):
-        return get_object_or_404(PostBlock, pk=block_id, is_removed=False)
+        return get_object_or_404(PostBlock, pk=block_id, is_removed=False, is_published=True)
 
     def hide(self):
         self.is_removed = True

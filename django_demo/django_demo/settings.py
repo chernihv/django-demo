@@ -116,3 +116,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+USER_FILES_PATH = os.path.join(BASE_DIR, '/blog/static/blog/user_files/')

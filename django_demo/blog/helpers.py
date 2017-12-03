@@ -28,15 +28,13 @@ def redirect(url_name: str, *args, **kwargs):
 
 
 def save_file(file, file_name: str):
-    path_to_save = settings.BASE_DIR + '/blog/static/blog/user_files/'
-    with open(path_to_save + file_name, 'wb+') as path:
+    with open(settings.USER_FILES_PATH + file_name, 'wb+') as path:
         for chunk in file.chunks():
             path.write(chunk)
 
 
 def delete_file(file_name: str):
-    path_to_del = settings.BASE_DIR + '/blog/static/blog/user_files/'
-    remove(path_to_del + file_name)
+    remove(settings.USER_FILES_PATH + file_name)
 
 
 def get_fields_request(request, *args):
