@@ -1,0 +1,32 @@
+{% load staticfiles %}
+<div block_id="{{ block.id }}">
+    <hr class="margin-bottom-10">
+    <span class="label label-info margin-bottom-10">Type: {{ block.block_type }}</span>
+    <span class="label label-pill label-danger margin-bottom-10 remove-block" block_id="{{ block.id }}">remove</span>
+    <span class="label label-success margin-bottom-10 save-block" block_id="{{ block.id }}">save changes</span>
+    {% if block.is_published %}
+        {% if block.block_type == 'block_text' %}
+            <div class="margin-top-10">{{ block.storage|linebreaks|urlize }}</div>
+        {% elif block.block_type == 'block_image' %}
+            <div class="blog-post margin-top-10">
+                <div class="post-image">
+                    <img src="{% static 'blog/user_files' %}/{{ block.storage }}">
+                </div>
+            </div>
+        {% elif block.block_type == 'block_code' %}
+            <pre class="margin-top-10">{{ block.storage }}</pre>
+        {% endif %}
+    {% else %}
+        {% if block.block_type == 'block_text' %}
+            {% include 'blog/post/_post_textarea.html' with block=block %}
+        {% elif block.block_type == 'block_image' %}
+            <div class="blog-post margin-top-10">
+                <div class="post-image">
+                    <img src="{% static 'blog/user_files' %}/{{ block.storage }}">
+                </div>
+            </div>
+        {% elif block.block_type == 'block_code' %}
+            {% include 'blog/post/_post_textarea.html' with block=block %}
+        {% endif %}
+    {% endif %}
+</div>

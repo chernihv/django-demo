@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse, HttpResponseForbidden, HttpResponseBadRequest
 from django.shortcuts import resolve_url, render, get_object_or_404
 from django.utils import timezone
 
@@ -69,29 +69,41 @@ def post_delete(request, post_id: int):
 
 @decorators.group_require(constants.Group.REGULAR_USER)
 def block_create(request, post_id: int):
+    post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
+    if request.user.id != post.user_id:
+        return HttpResponseForbidden()
     block = models.PostBlock(post_id=post_id, is_published=False)
-    if request.POST['block_type'] == models.PostBlock.BLOCK_CODE:
+    if request.POST.get('block_type') == models.PostBlock.BLOCK_CODE:
         block.block_type = models.PostBlock.BLOCK_CODE
-    if request.POST['block_type'] == models.PostBlock.BLOCK_TEXT:
+    elif request.POST.get('block_type') == models.PostBlock.BLOCK_TEXT:
         block.block_type = models.PostBlock.BLOCK_TEXT
-    if request.POST['block_type'] == models.PostBlock.BLOCK_IMAGE:
+    elif request.POST.get('block_type') == models.PostBlock.BLOCK_IMAGE:
         block.block_type = models.PostBlock.BLOCK_IMAGE
+    else:
+        return HttpResponseBadRequest('Not valid block type')
     block.save()
     return JsonResponse({'block_id': block.id, 'block_type': block.block_type})
 
 
 @decorators.group_require(constants.Group.REGULAR_USER)
-def block_save(request):
-    request.POST.get('block_id')
-    pass
+def block_save(request, post_id: int):
+    post = get_object_or_404(models.Post, pk=post_id, is_removed=False)
+    if request.user.id != post.user_id:
+        return HttpResponseForbidden()
+    block_id = request.POST.get('block_id')
+    block = models.PostBlock.objects.get(pk=block_id)
+    block.storage = request.POST.get('value')
+    block.save()
+    return JsonResponse({'status': '200', 'block_id': block.id})
 
 
 @decorators.group_require(constants.Group.REGULAR_USER)
-def block_delete(request, post_id: int, block_id: int):
-    post = models.Post.get_post_or_404(post_id)
+def block_delete(request, post_id: int):
+    post = get_object_or_404(models.Post, user_id=request.user.id, pk=post_id, is_removed=False)
     if request.user.id == post.user_id:
+        block_id = request.POST.get('block_id')
         models.PostBlock.get_block_or_404(block_id).hide()
-        return redirect('blog:edit', args=[post.id])
+        return JsonResponse({'status': '200', 'block_id': block_id})
     else:
         return HttpResponseForbidden()
 
