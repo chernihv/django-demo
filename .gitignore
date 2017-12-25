@@ -1,3 +1,4 @@
 .idea
 django_demo/db.sqlite3
 venv
+server.sh
