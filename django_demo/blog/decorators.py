@@ -8,7 +8,7 @@ def auth_only(func):
         if request.user.is_authenticated:
             return func(request, *args, **kwargs)
         else:
-            return helpers.go_login()
+            return helpers.Response.go_login()
 
     return wrapper
 
@@ -18,7 +18,7 @@ def guest_only(func):
         if not request.user.is_authenticated:
             return func(request, *args, **kwargs)
         else:
-            return helpers.go_home()
+            return helpers.Response.go_home()
 
     return wrapper
 
@@ -31,7 +31,7 @@ def superuser_only(func):
             else:
                 return HttpResponseForbidden()
         else:
-            return helpers.go_login()
+            return helpers.Response.go_login()
 
     return wrapper
 
@@ -59,7 +59,7 @@ def group_require(name):
                 else:
                     return HttpResponseForbidden()
             else:
-                return helpers.go_login()
+                return helpers.Response.go_login()
 
         return wrapper
 

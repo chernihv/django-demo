@@ -3,31 +3,14 @@ from django.shortcuts import resolve_url, render, get_object_or_404
 from django.utils import timezone
 
 from .. import constants, models, helpers, decorators, forms, services
-from ..helpers import is_post, get_valid_name, save_file, go_home, redirect
+from ..helpers import Request, File, Response
 
 
 @decorators.group_require(constants.Group.REGULAR_USER)
 def post_create(request):
-    if is_post(request):
-        form = forms.PostForm(request.POST)
-        image_form = forms.PostFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.created_at = timezone.now()
-            post.user = request.user
-            post.save()
-            services.unpack_and_save_all_blocks(request, post.id)
-            if image_form.is_valid():
-                file = request.FILES['file']
-                saved_name = get_valid_name(file)
-                save_file(file, saved_name)
-                models.PostFile(post_id=post.id, file_type=models.PostFile.POST_IMAGE,
-                                file_name=saved_name, created_at=timezone.now()).save()
-            return JsonResponse({'redirect': resolve_url('blog:detail', post.id)})
-    else:
-        post = models.Post.get_post_or_create(request.user.id)
-        form = forms.PostForm(instance=post)
-        image_form = forms.PostFileForm()
+    post = models.Post.get_post_or_create(request.user.id)
+    form = forms.PostForm(instance=post)
+    image_form = forms.PostFileForm()
     return render(request, 'blog/post_create.html', {'form': form, 'image_form': image_form})
 
 
@@ -37,22 +20,7 @@ def post_edit(request, post_id: int):
     form = forms.PostForm(instance=post)
     image_form = forms.PostFileForm()
     if request.user.id == post.user_id:
-        if is_post(request):
-            form = forms.PostForm(request.POST, instance=post)
-            image_form = forms.PostFileForm(request.POST, request.FILES)
-            if form.is_valid():
-                form.save()
-                services.unpack_and_save_all_blocks(request, post_id)
-                if image_form.is_valid():
-                    post.disable_post_image()
-                    file = request.FILES['file']
-                    saved_name = get_valid_name(file)
-                    save_file(file, saved_name)
-                    models.PostFile(post_id=post.id, file_type=models.PostFile.POST_IMAGE,
-                                    file_name=saved_name, created_at=timezone.now()).save()
-            return JsonResponse({'redirect': resolve_url('blog:detail', post.id)})
-        else:
-            return render(request, 'blog/post_edit.html', {'form': form, 'image_form': image_form})
+        return render(request, 'blog/post_edit.html', {'form': form, 'image_form': image_form})
     else:
         return HttpResponseForbidden()
 
@@ -62,7 +30,7 @@ def post_delete(request, post_id: int):
     post = models.Post.get_post_or_404(post_id)
     if request.user.id == post.user_id:
         post.remove_post()
-        return go_home()
+        return Response.go_home()
     else:
         return HttpResponseForbidden()
 
@@ -127,20 +95,20 @@ def post_detail(request, post_id: int):
 def post_remove_header_image(request, post_id: int):
     post = models.Post.get_post_or_404(post_id)
     post.disable_post_image()
-    return redirect('blog:edit', args=[post_id])
+    return Response.redirect('blog:edit', args=[post_id])
 
 
 @decorators.group_require(constants.Group.REGULAR_USER)
 def post_comment(request, post_id: int):
-    if is_post(request):
+    if Request.is_post(request):
         comment_text = request.POST['post_comment']
         models.PostComment(post_id=post_id, comment_text=comment_text, created_at=timezone.now(),
                            user_id=request.user.id).save()
-        return redirect('blog:detail', args=[post_id])
+        return Response.redirect('blog:detail', args=[post_id])
 
 
 @decorators.superuser_only
 def post_comment_hide(request, comment_id: int):
     comment = get_object_or_404(models.PostComment, pk=comment_id)
     comment.hide_comment()
-    return redirect('blog:detail', args=[comment.post_id])
+    return Response.redirect('blog:detail', args=[comment.post_id])

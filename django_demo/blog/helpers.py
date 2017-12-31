@@ -6,57 +6,63 @@ from os import remove
 import time
 
 
-def get_client_ip(request: HttpRequest):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+class Response:
+    @staticmethod
+    def go_home():
+        return HttpResponseRedirect(reverse('blog:index'))
+
+    @staticmethod
+    def go_login():
+        return HttpResponseRedirect(reverse('blog:login'))
+
+    @staticmethod
+    def redirect(url_name: str, *args, **kwargs):
+        return HttpResponseRedirect(reverse(url_name, *args, **kwargs))
 
 
-def go_home():
-    return HttpResponseRedirect(reverse('blog:index'))
+class File:
+    @staticmethod
+    def save(file, file_name: str):
+        with open(settings.USER_FILES_PATH + file_name, 'wb+') as path:
+            for chunk in file.chunks():
+                path.write(chunk)
+
+    @staticmethod
+    def delete(file_name: str):
+        remove(settings.USER_FILES_PATH + file_name)
+
+    @staticmethod
+    def get_valid_name(file):
+        return get_random_string(25) + str((time.time())).replace('.', '') + file.name
 
 
-def go_login():
-    return HttpResponseRedirect(reverse('blog:login'))
+class Request:
+    @staticmethod
+    def get_fields_request(request, *args):
+        result = []
+        for field in args:
+            result.append(request.POST[field])
+        return result
 
+    @staticmethod
+    def get_list_fields_request(request, *args):
+        result = []
+        for fields in args:
+            result.append(request.POST.getlist(key=fields))
+        return result
 
-def redirect(url_name: str, *args, **kwargs):
-    return HttpResponseRedirect(reverse(url_name, *args, **kwargs))
+    @staticmethod
+    def is_post(request: HttpRequest):
+        return 'POST' in request.method
 
-
-def save_file(file, file_name: str):
-    with open(settings.USER_FILES_PATH + file_name, 'wb+') as path:
-        for chunk in file.chunks():
-            path.write(chunk)
-
-
-def delete_file(file_name: str):
-    remove(settings.USER_FILES_PATH + file_name)
-
-
-def get_fields_request(request, *args):
-    result = []
-    for field in args:
-        result.append(request.POST[field])
-    return result
-
-
-def get_list_fields_request(request, *args):
-    result = []
-    for fields in args:
-        result.append(request.POST.getlist(key=fields))
-    return result
-
-
-def is_post(request: HttpRequest):
-    return 'POST' in request.method
-
-
-def get_valid_name(file):
-    return get_random_string(25) + str((time.time())).replace('.', '') + file.name
+    @staticmethod
+    def get_client_ip(request: HttpRequest):
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip
 
 
 class colorprint:

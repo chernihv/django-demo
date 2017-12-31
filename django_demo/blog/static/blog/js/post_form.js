@@ -51,13 +51,13 @@ class EventHandlers {
         this.remove_created_block();
         this.send_form();
         this.save_created_block();
-    }
+    };
 
     change_image_input() {
         $(FORM_IMAGE_INPUT).change(function () {
             Helpers.readURL(this);
         });
-    }
+    };
 
     question_block_button() {
         $(document).on('click', '.question-block a', function (event) {
@@ -66,29 +66,30 @@ class EventHandlers {
             let parent = $('#question_block_' + parent_id);
             app.add_choice_block(parent);
         });
-    }
+    };
 
     image_block_button() {
         $(document).on('click', ADD_IMAGE_BLOCK_BUTTON, function () {
-            app.post_constructor.add_image_block();
+            Helpers.request_create_new_block(IMAGE_BLOCKS, PostConstructor.add_image_block);
         });
         $(document).on('change', '[name=' + IMAGE_BLOCKS + ']', function (event) {
-            Helpers.readURL(this, $("#image_block_" + app.post_constructor.image_iter));
-            app.post_constructor.image_iter++;
+            let block_id = $(event.target).attr('block_id');
+            let image = $('img[block_id' + block_id + ']');
+            Helpers.readURL(event.target, image);
         });
-    }
+    };
 
     code_block_button() {
         $(document).on('click', ADD_CODE_BLOCK_BUTTON, function () {
             Helpers.request_create_new_block(CODE_BLOCKS, PostConstructor.add_code_block);
         });
-    }
+    };
 
     text_block_button() {
         $(document).on('click', ADD_TEXT_BLOCK_BUTTON, function () {
             Helpers.request_create_new_block(TEXT_BLOCKS, PostConstructor.add_text_block);
         });
-    }
+    };
 
     send_form() {
         $(document).on('click', '#send_form_button', function (event) {
@@ -96,7 +97,7 @@ class EventHandlers {
                 window.location = data['redirect']
             });
         });
-    }
+    };
 
     remove_created_block() {
         $(document).on('click', REMOVE_BLOCK_BUTTON, function (event) {
@@ -105,7 +106,7 @@ class EventHandlers {
                 Helpers.request_delete_block(block_id, PostConstructor.delete_block);
             }
         });
-    }
+    };
 
     save_created_block() {
         function send_changes(event) {
@@ -122,7 +123,7 @@ class EventHandlers {
 
         $(document).on('click', SAVE_BLOCK_BUTTON, send_changes);
         $(document).on('change', 'textarea[block_id]', send_changes);
-    }
+    };
 }
 
 class Helpers {
@@ -175,28 +176,6 @@ class PostConstructor {
         console.log('Block created, id:' + PostConstructor.get_block_id(data));
     };
 
-    add_image_block() {
-        let first_elem = $('<div class="col-md-12 blog-post"></div>');
-        let second_elem = $('<div class="post-image"></div>');
-        let third_elem = $('<img>');
-
-        third_elem.attr('id', 'image_block_' + this.image_iter);
-
-        first_elem.append(second_elem);
-        second_elem.append(third_elem);
-
-        let wrapper = $("<a hidden></a>");
-        let input = $("<input type='file'>");
-        input.attr('name', IMAGE_BLOCKS);
-        input.attr('id', 'image_block_' + this.image_iter);
-        wrapper.append(input);
-
-        $(POST_CONTENT_BLOCKS).append(this.create_hr());
-        $(POST_CONTENT_BLOCKS).append(first_elem);
-        $(POST_CONTENT_BLOCKS).append(wrapper);
-        input.click();
-    };
-
     static add_text_block(data) {
 
         let block_id = PostConstructor.get_block_id(data);
@@ -245,6 +224,33 @@ class PostConstructor {
         }
     };
 
+    static add_image_block(data) {
+        let block_id = PostConstructor.get_block_id(data);
+
+        let first_elem = $('<div class="col-md-12 blog-post"></div>');
+        let second_elem = $('<div class="post-image"></div>');
+        let third_elem = $('<img>');
+        third_elem.attr('block_id', block_id);
+
+        let input = $("<input type='file' name='" + IMAGE_BLOCKS + "'>");
+        let a_wrapper = $('<a hidden></a>');
+        a_wrapper.append(input);
+
+        first_elem.append(second_elem);
+        first_elem.append(a_wrapper);
+        second_elem.append(third_elem);
+
+        let wrapper = $("<div></div>");
+        PostConstructor.add_block_id(wrapper, block_id);
+        wrapper.append(PostConstructor.create_hr());
+        wrapper.append(PostConstructor.create_labels(block_id, data['block_type'], false));
+        wrapper.append(first_elem);
+
+
+        $(POST_CONTENT_BLOCKS).append(wrapper);
+        input.click();
+    };
+
     static add_block_id(object, block_id) {
         $(object).attr('block_id', block_id);
     };
@@ -253,7 +259,7 @@ class PostConstructor {
         return data['block_id'];
     };
 
-    static create_labels(block_id, block_type, append_save_button = true) {
+    static create_labels(block_id, block_type, save_button = true) {
         let first_label = $('<span class="label label-info margin-bottom-10">Type: ' + block_type + '</span>');
         let second_label = $('<span class="label label-pill label-danger margin-bottom-10 remove-block">remove</span>');
         PostConstructor.add_block_id(second_label, block_id);
@@ -262,7 +268,7 @@ class PostConstructor {
         wrapper.append(first_label);
         wrapper.append(second_label);
 
-        if (append_save_button) {
+        if (save_button) {
             let third_label = $('<span class="label label-success margin-bottom-10 save-block">save changes</span>');
             PostConstructor.add_block_id(third_label, block_id);
             wrapper.append(third_label);
@@ -287,5 +293,5 @@ class PostConstructor {
 
     static delete_block(data) {
         $("div[block_id=" + PostConstructor.get_block_id(data) + "]").remove();
-    }
+    };
 }

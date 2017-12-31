@@ -3,17 +3,17 @@ from django.contrib.auth.models import User, Group
 from django.shortcuts import render, get_object_or_404
 
 from .. import constants, models, helpers, decorators, forms, services
-from ..helpers import is_post, get_fields_request, go_home
+from ..helpers import Request, Response
 
 
 @decorators.guest_only
 def user_login(request):
-    if is_post(request):
-        username, password = get_fields_request(request, 'username', 'password')
+    if Request.is_post(request):
+        username, password = Request.get_fields_request(request, 'username', 'password')
         user = auth.authenticate(username=username, password=password)
         if user is not None and user.is_active:
             auth.login(request, user)
-            return go_home()
+            return Response.go_home()
     form = forms.UserLoginForm()
     return render(request, 'blog/user_login.html', {'form': form})
 
@@ -21,19 +21,19 @@ def user_login(request):
 @decorators.auth_only
 def user_logout(request):
     auth.logout(request)
-    return go_home()
+    return Response.go_home()
 
 
 @decorators.guest_only
 def user_registration(request):
-    if is_post(request):
+    if Request.is_post(request):
         form = forms.UserRegistrationForm(request.POST)
         if form.is_valid():
-            username, password, email = get_fields_request(request, 'username', 'password', 'email')
+            username, password, email = Request.get_fields_request(request, 'username', 'password', 'email')
             user = User.objects.create_user(username=username, password=password, email=email)
             user.groups.add(Group.objects.get(name=constants.Group.REGULAR_USER))
             auth.login(request, user)
-            return go_home()
+            return Response.go_home()
         else:
             messages.add_message(request, messages.INFO, 'User: ' + request.POST['username'] + ' already exist')
     else:
