@@ -64,3 +64,8 @@ def group_require(name):
         return wrapper
 
     return decorator
+
+
+def no_login_require(func):
+    setattr(func, '_no_login_require', True)
+    return func

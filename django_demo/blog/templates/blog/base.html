@@ -60,7 +60,6 @@
                                     <a href="{% url 'blog:contact' %}" title="Contact me">
                                         <i class="icon-envelope btn"></i>
                                     </a>
-
                                     {# login/logout #}
                                     {% if request.user.is_authenticated %}
                                         <a href="{% url 'blog:profile' %}" title="Profile">
@@ -79,6 +78,9 @@
                                             <i class="icon-login btn"></i>
                                         </a>
                                     {% endif %}
+                                    <a href="{% url 'vue_js:index' %}">
+                                        <i class="icon-anchor btn" title="Vue test page"></i>
+                                    </a>
 
                                 {% endblock content_header_icon %}
                             </div>

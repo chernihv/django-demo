@@ -18,13 +18,12 @@ def user_login(request):
     return render(request, 'blog/user_login.html', {'form': form})
 
 
-@decorators.auth_only
 def user_logout(request):
     auth.logout(request)
     return Response.go_home()
 
 
-@decorators.guest_only
+@decorators.no_login_require
 def user_registration(request):
     if Request.is_post(request):
         form = forms.UserRegistrationForm(request.POST)
@@ -41,12 +40,10 @@ def user_registration(request):
     return render(request, 'blog/user_registration.html', {'form': form})
 
 
-@decorators.auth_only
 def user_profile(request):
     return render(request, 'blog/user_profile.html')
 
 
-@decorators.auth_only
 def change_password_user(request):
     messages.add_message(request, messages.INFO, 'You can not change the password')
     return render(request, 'blog/reset_password.html')
