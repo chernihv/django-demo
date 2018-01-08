@@ -1,15 +1,15 @@
 from django.utils.deprecation import MiddlewareMixin
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.conf import settings
 from django.shortcuts import reverse, NoReverseMatch
 
 
 class LoginRequiredMiddleware(MiddlewareMixin):
     @staticmethod
-    def process_view(request: HttpRequest, view_func, *args, **kwargs):
+    def process_view(request, view_func, *args, **kwargs):
         """
         If you need to give access to execute view, add this attribute to view
-         _no_login_require equal True, or use decorator no_login_require
+        _no_login_require equal True, or use decorator no_login_require
         """
         assert hasattr(settings, 'LOGIN_URL'), "Does not set parameter LOGIN_URL in settings"
         assert hasattr(request,

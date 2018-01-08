@@ -1,40 +1,39 @@
 {% load staticfiles %}
 <!doctype html>
-<html lang="en">
+<html>
 <head>
     {% block head %}
-        <title>{% block page_title %}Document{% endblock page_title %}</title>
-        <meta charset="UTF-8">
-        <meta name="viewport"
-              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta charset="utf-8">
+        <meta content="width=device-width,initial-scale=1,minimal-ui" name="viewport">
         {% block all_css %}
             {% block common_css %}
-                <link rel="stylesheet" href="{% static 'vue_js/css/app_css.css' %}">
+                <link rel="stylesheet" href="{% static 'vue_js/sources/css/material_icons.css' %}">
+                <link rel="stylesheet" href="{% static 'vue_js/sources/css/vue-material.min.css' %}">
+                <link rel="stylesheet" href="{% static 'vue_js/sources/css/default_material_theme.css' %}">
             {% endblock common_css %}
             {% block extend_css %}
             {% endblock extend_css %}
         {% endblock all_css %}
-        {% block all_js %}
-            {% block common_js %}
-                <script src="{% static 'vue_js/sources/vue.min.js' %}"></script>
-                <script src="{% static 'blog/js/jquery.min.js' %}"></script>
-                <script src="{% static 'vue_js/js/app_js.js' %}"></script>
-            {% endblock common_js %}
-            {% block extend_js %}
-            {% endblock extend_js %}
-        {% endblock all_js %}
     {% endblock head %}
 </head>
 <body>
 {% block body %}
-    <h1><a href="{% url 'blog:index' %}">Go back</a></h1>
-    <hr>
-    {% verbatim %}
-    <div id="application">
 
-    </div>
-    {% endverbatim %}
+    {% block vue_application %}
+        {% include 'vue_js/vue_application.html' %}
+    {% endblock vue_application %}
+
+    {% block all_js %}
+        {% block common_js %}
+            <script src="{% static 'blog/js/jquery.min.js' %}"></script>
+            <script src="{% static 'vue_js/sources/js/vue.min.js' %}"></script>
+            <script src="{% static 'vue_js/sources/js/vue-material.min.js' %}"></script>
+            <script src="{% static 'vue_js/js/vue_app.js' %}"></script>
+        {% endblock common_js %}
+        {% block extend_js %}
+        {% endblock extend_js %}
+    {% endblock all_js %}
+
 {% endblock body %}
 </body>
 </html>
