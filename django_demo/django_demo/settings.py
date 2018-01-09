@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'vue_js',
 ]
 
 MIDDLEWARE = [
@@ -48,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_demo.middleware.LoginRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'django_demo.urls'
@@ -116,3 +118,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+USER_FILES_PATH = os.path.join(BASE_DIR, '/blog/static/blog/user_files/')
+
+LOGIN_URL = 'blog:login'

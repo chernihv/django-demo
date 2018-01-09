@@ -22,6 +22,10 @@
         <script>
             const CSRF_TOKEN = '{{ csrf_token }}';
             const POST_ID = '{{ form.instance.id }}';
+            const PUBLISH_POST = '{% url 'blog:post_publish' form.instance.id %}';
+            const CREATE_BLOCK_ACTION = '{% url 'blog:block_create' form.instance.id %}';
+            const SAVE_BLOCK_ACTION = '{% url 'blog:block_save' form.instance.id %}';
+            const DELETE_BLOCK_ACTION = '{% url 'blog:block_delete' form.instance.id %}';
         </script>
     {% endblock js_constants_common %}
     {% block js_constants_extends %}

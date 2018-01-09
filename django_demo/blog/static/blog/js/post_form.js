@@ -1,8 +1,23 @@
 let app;
-let app_settings;
+
+const CODE_BLOCKS = 'block_code';
+const IMAGE_BLOCKS = 'block_image';
+const TEXT_BLOCKS = 'block_text';
+
+let FORM_IMAGE = '#post_image';
+let FORM_IMAGE_INPUT = '#post_image_input';
+let POST_CONTENT_BLOCKS = '#post_blocks';
+let POST_TITLE_INPUT = '#title';
+let POST_TEXT_INPUT = '#post_text';
+
+let ADD_CODE_BLOCK_BUTTON = '#add_code_block_button';
+let ADD_TEXT_BLOCK_BUTTON = '#add_text_block_button';
+let ADD_IMAGE_BLOCK_BUTTON = '#add_image_block_button';
+
+let REMOVE_BLOCK_BUTTON = '.remove-block';
+let SAVE_BLOCK_BUTTON = '.save-block';
 
 $(document).ready(function (event) {
-    app_settings = new AppSettings();
     app = new Application();
 });
 
@@ -10,39 +25,20 @@ class Application {
 
     constructor() {
         this.create_base_objects();
-        this.ready_log();
+        Application.ready_log();
     };
 
     create_base_objects() {
         this.event_handlers = new EventHandlers();
         this.helper = new Helpers();
         this.post_constructor = new PostConstructor();
+        this.post_constructor_original_textinput = $(POST_CONTENT_BLOCKS + ' textarea').first();
     };
 
-    ready_log() {
+    static ready_log() {
         console.log('Constructor ready');
-        console.log('Post ID: ' + app_settings.POST_ID);
+        console.log('Post ID: ' + POST_ID);
     };
-}
-
-class AppSettings {
-    constructor() {
-        this.FRONT_NAME_QUESTIONS = 'question_block';
-        this.FRONT_NAME_CODE_BLOCKS = 'code_block';
-        this.FRONT_NAME_IMAGE_BLOCKS = 'image_block';
-        this.FRONT_NAME_TEXT_BLOCKS = 'text_block';
-
-        //Remote values;
-        this.POST_ID = POST_ID;
-        this.ACTION_URL = ACTION_URL;
-        this.CSRF_TOKEN = CSRF_TOKEN;
-
-        this.FORM_IMAGE = '#post_image';
-        this.FORM_IMAGE_INPUT = '#post_image_input';
-        this.POST_CONTENT_BLOCKS = '#post_blocks';
-        this.POST_TITLE_INPUT = '#title';
-        this.POST_TEXT_INPUT = '#post_text';
-    }
 }
 
 class EventHandlers {
@@ -51,16 +47,17 @@ class EventHandlers {
         this.question_block_button();
         this.image_block_button();
         this.code_block_button();
-        this.test_block_button();
+        this.text_block_button();
         this.remove_created_block();
         this.send_form();
-    }
+        this.save_created_block();
+    };
 
     change_image_input() {
-        $(app_settings.FORM_IMAGE_INPUT).change(function () {
-            app.helper.readURL(this);
+        $(FORM_IMAGE_INPUT).change(function () {
+            Helpers.readURL(this);
         });
-    }
+    };
 
     question_block_button() {
         $(document).on('click', '.question-block a', function (event) {
@@ -69,186 +66,218 @@ class EventHandlers {
             let parent = $('#question_block_' + parent_id);
             app.add_choice_block(parent);
         });
-    }
+    };
 
     image_block_button() {
-        $(document).on('click', '#add_image_block_button', function () {
-            app.post_constructor.add_image_block();
+        $(document).on('click', ADD_IMAGE_BLOCK_BUTTON, function () {
+            Helpers.request_create_new_block(IMAGE_BLOCKS, PostConstructor.add_image_block);
         });
-        $(document).on('change', '[name=' + app_settings.FRONT_NAME_IMAGE_BLOCKS + ']', function (event) {
-            app.helper.readURL(this, $("#image_block_" + app.post_constructor.IMAGE_ITER));
-            app.post_constructor.IMAGE_ITER++;
+        $(document).on('change', '[name=' + IMAGE_BLOCKS + ']', function (event) {
+            let block_id = $(event.target).attr('block_id');
+            let image = $('img[block_id' + block_id + ']');
+            Helpers.readURL(event.target, image);
         });
-    }
+    };
 
     code_block_button() {
-        $(document).on('click', '#add_code_block_button', function () {
-            app.post_constructor.add_code_block();
+        $(document).on('click', ADD_CODE_BLOCK_BUTTON, function () {
+            Helpers.request_create_new_block(CODE_BLOCKS, PostConstructor.add_code_block);
         });
-    }
+    };
 
-    test_block_button() {
-        $(document).on('click', '#add_text_block_button', function () {
-            app.post_constructor.add_text_block();
+    text_block_button() {
+        $(document).on('click', ADD_TEXT_BLOCK_BUTTON, function () {
+            Helpers.request_create_new_block(TEXT_BLOCKS, PostConstructor.add_text_block);
         });
-    }
+    };
 
     send_form() {
         $(document).on('click', '#send_form_button', function (event) {
-            $.ajax({
-                type: 'POST',
-                url: app_settings.ACTION_URL,
-                data: app.helper.get_form_data(),
-                processData: false,
-                contentType: false,
-                success: function (response_data) {
-                    window.location = response_data['redirect'];
-                }
+            $.post(PUBLISH_POST, {'post_id': POST_ID, csrfmiddlewaretoken: CSRF_TOKEN}, function (data) {
+                window.location = data['redirect']
             });
         });
-    }
+    };
 
     remove_created_block() {
-        $(document).on('click', '.remove-block', function (event) {
-            return confirm('Remove block?');
+        $(document).on('click', REMOVE_BLOCK_BUTTON, function (event) {
+            let block_id = $(event.target).attr('block_id');
+            if (confirm('Remove block?')) {
+                Helpers.request_delete_block(block_id, PostConstructor.delete_block);
+            }
         });
-    }
+    };
 
+    save_created_block() {
+        function send_changes(event) {
+            let block_id = $(event.target).attr('block_id');
+            let value = $('textarea[block_id=' + block_id + ']').val();
+            $.post(SAVE_BLOCK_ACTION, {
+                block_id: block_id,
+                value: value,
+                csrfmiddlewaretoken: CSRF_TOKEN
+            }, function (data) {
+
+            });
+        }
+
+        $(document).on('click', SAVE_BLOCK_BUTTON, send_changes);
+        $(document).on('change', 'textarea[block_id]', send_changes);
+    };
 }
 
 class Helpers {
-    readURL(input, image_elem) {
+    static readURL(input, image_elem) {
         if (input.files && input.files[0]) {
             let reader = new FileReader();
             reader.onload = function (e) {
                 if (image_elem !== undefined) {
                     $(image_elem).attr('src', e.target.result);
                 } else {
-                    $(app_settings.FORM_IMAGE).attr('src', e.target.result);
+                    $(FORM_IMAGE).attr('src', e.target.result);
                 }
             };
             reader.readAsDataURL(input.files[0]);
         }
     };
 
-    get_form_data() {
-        let form_data = new FormData();
-        form_data.append('file', $(app_settings.FORM_IMAGE_INPUT)[0].files[0]);
-        form_data.append('csrfmiddlewaretoken', app_settings.CSRF_TOKEN);
-        form_data.append('title', $(app_settings.POST_TITLE_INPUT).val());
-        form_data.append('post_text', $(app_settings.POST_TEXT_INPUT).val());
-        let image_blocks = $('[name=' + app_settings.FRONT_NAME_IMAGE_BLOCKS + ']');
-        for (let i = 0; i < image_blocks.length; i++) {
-            form_data.append(app_settings.FRONT_NAME_IMAGE_BLOCKS, image_blocks[i].files[0]);
-        }
-        let code_blocks = $('[name=' + app_settings.FRONT_NAME_CODE_BLOCKS + ']');
-        for (let i = 0; i < code_blocks.length; i++) {
-            form_data.append(app_settings.FRONT_NAME_CODE_BLOCKS, $(code_blocks[i]).val());
-        }
-        let text_bloks = $('[name=' + app_settings.FRONT_NAME_TEXT_BLOCKS + ']');
-        for (let i = 0; i < text_bloks.length; i++) {
-            form_data.append(app_settings.FRONT_NAME_TEXT_BLOCKS, $(text_bloks[i]).val());
-        }
-        return form_data;
+    static request_create_new_block(block_type, call_back) {
+        $.post(CREATE_BLOCK_ACTION, {block_type: block_type, csrfmiddlewaretoken: CSRF_TOKEN}, function (data) {
+            PostConstructor.append_wrapper(call_back, data);
+        });
     };
+
+    static request_delete_block(block_id, call_back) {
+        $.post(DELETE_BLOCK_ACTION, {block_id: block_id, csrfmiddlewaretoken: CSRF_TOKEN}, function (data) {
+            call_back(data);
+        });
+    }
 }
 
 class PostConstructor {
 
     constructor() {
-        this.QUESTION_ITER = 0;
-        this.IMAGE_ITER = 0;
-        this.BLOCK_ITER = 0;
-        this.HAVE_FIRST_CODE_BLOCK = false;
-    }
-
-    add_image_block() {
-        let first_elem = $('<div class="col-md-12 blog-post"></div>');
-        let second_elem = $('<div class="post-image"></div>');
-        let third_elem = $('<img>');
-
-        third_elem.attr('id', 'image_block_' + this.IMAGE_ITER);
-
-        first_elem.append(second_elem);
-        second_elem.append(third_elem);
-
-        let wrapper = $("<a hidden></a>");
-        let input = $("<input type='file'>");
-        input.attr('name', app_settings.FRONT_NAME_IMAGE_BLOCKS);
-        input.attr('id', 'image_block_' + this.IMAGE_ITER);
-        this.add_in_queue(input);
-        wrapper.append(input);
-
-        $(app_settings.POST_CONTENT_BLOCKS).append(this.get_hr());
-        $(app_settings.POST_CONTENT_BLOCKS).append(first_elem);
-        $(app_settings.POST_CONTENT_BLOCKS).append(wrapper);
-        input.click();
+        this.block_iter = 0;
+        this.is_have_first_block_code = false;
     };
 
-    add_code_block() {
+    static before_append(data) {
+
+    };
+
+    static append_wrapper(func, data) {
+        PostConstructor.before_append(data);
+        func(data);
+        PostConstructor.after_append(data);
+    };
+
+    static after_append(data) {
+        app.post_constructor.block_iter++;
+        console.log('Block created, id:' + PostConstructor.get_block_id(data));
+    };
+
+    static add_text_block(data) {
+
+        let block_id = PostConstructor.get_block_id(data);
+        let text_block = $("<textarea required></textarea>");
+        let original = app.post_constructor_original_textinput;
+
+        let labels = PostConstructor.create_labels(block_id, data['block_type']);
+
+        PostConstructor.add_block_id(text_block, block_id);
+        text_block.addClass(original.attr('class'));
+        text_block.addClass('margin-top-10');
+        text_block.attr('name', TEXT_BLOCKS);
+        text_block.attr('rows', original.attr('rows'));
+        text_block.attr('placeholder', original.attr('placeholder'));
+
+        let wrapper = $("<div></div>");
+        PostConstructor.add_block_id(wrapper, block_id);
+
+        wrapper.append(PostConstructor.create_hr());
+        wrapper.append(labels);
+        wrapper.append(text_block);
+
+        $(POST_CONTENT_BLOCKS).append(wrapper);
+    };
+
+    static add_code_block(data) {
+        let block_id = PostConstructor.get_block_id(data);
         let code_block = $("<textarea required placeholder='Code block'></textarea>");
-        let original = $(app_settings.POST_CONTENT_BLOCKS + ' textarea').first();
+        let original = $(POST_CONTENT_BLOCKS + ' textarea').first();
         code_block.addClass(original.attr('class'));
-        code_block.attr('name', app_settings.FRONT_NAME_CODE_BLOCKS);
+        PostConstructor.add_block_id(code_block, block_id);
+        code_block.attr('name', CODE_BLOCKS);
         code_block.attr('rows', original.attr('rows'));
-        this.add_in_queue(code_block);
 
+        let wrapper = $("<div></div>");
+        PostConstructor.add_block_id(wrapper, block_id);
+        wrapper.append(PostConstructor.create_hr());
+        wrapper.append(PostConstructor.create_labels(block_id, data['block_type']));
+        wrapper.append(code_block);
 
-        $(app_settings.POST_CONTENT_BLOCKS).append(this.get_hr());
-        $(app_settings.POST_CONTENT_BLOCKS).append(code_block);
-        if (!this.HAVE_FIRST_CODE_BLOCK) {
-            let alert_block = this.create_bootstrap_alert('Text in this area wrap in special code tags');
-            $(app_settings.POST_CONTENT_BLOCKS).append(alert_block);
-            this.HAVE_FIRST_CODE_BLOCK = true;
+        $(POST_CONTENT_BLOCKS).append(wrapper);
+        if (!app.post_constructor.is_have_first_block_code) {
+            let alert_block = PostConstructor.create_bootstrap_alert('Text in this area wrap in special code tags');
+            $(POST_CONTENT_BLOCKS).append(alert_block);
+            app.post_constructor.is_have_first_block_code = true;
         }
     };
 
-    add_question_block() {
-        let question_block = $("<div class='question-block'></div>");
-        question_block.attr('id', 'question_block_' + this.QUESTION_ITER);
-        let question_text = $("<input type='text' required class='form-control' title='Question' placeholder='Enter you question'>");
+    static add_image_block(data) {
+        let block_id = PostConstructor.get_block_id(data);
 
-        let add_choice_button = $("<a style='cursor: pointer; user-select: none' '>add choice...</a>");
-        add_choice_button.attr('value', this.QUESTION_ITER);
-        add_choice_button.attr('id', 'add_choice_button_' + this.QUESTION_ITER);
+        let first_elem = $('<div class="col-md-12 blog-post"></div>');
+        let second_elem = $('<div class="post-image"></div>');
+        let third_elem = $('<img>');
+        third_elem.attr('block_id', block_id);
 
-        question_text.attr('name', app_settings.FRONT_NAME_QUESTIONS);
-        question_block.attr('iter', this.QUESTION_ITER);
-        this.QUESTION_ITER++;
+        let input = $("<input type='file' name='" + IMAGE_BLOCKS + "'>");
+        let a_wrapper = $('<a hidden></a>');
+        a_wrapper.append(input);
 
-        question_block.append(add_choice_button);
-        question_block.append(question_text);
+        first_elem.append(second_elem);
+        first_elem.append(a_wrapper);
+        second_elem.append(third_elem);
 
-        $(app_settings.POST_CONTENT_BLOCKS).append(this.get_hr());
-        $(app_settings.POST_CONTENT_BLOCKS).append(question_block);
-        this.add_choice_block(question_block);
-        this.add_choice_block(question_block);
+        let wrapper = $("<div></div>");
+        PostConstructor.add_block_id(wrapper, block_id);
+        wrapper.append(PostConstructor.create_hr());
+        wrapper.append(PostConstructor.create_labels(block_id, data['block_type'], false));
+        wrapper.append(first_elem);
+
+
+        $(POST_CONTENT_BLOCKS).append(wrapper);
+        input.click();
     };
 
-    add_choice_block(parent) {
-
-        let choice_block = $("<input type='text' required class='form-control' placeholder='One of choice'>");
-        choice_block.attr('title', 'Choice question ' + parent.attr('iter'));
-        choice_block.attr('name', 'choice_text_' + parent.attr('iter'));
-
-        parent.append(choice_block);
+    static add_block_id(object, block_id) {
+        $(object).attr('block_id', block_id);
     };
 
-    add_text_block() {
-
-        let text_block = $("<textarea required></textarea>");
-        let original = $(app_settings.POST_CONTENT_BLOCKS + ' textarea').first();
-        text_block.addClass(original.attr('class'));
-        text_block.attr('name', app_settings.FRONT_NAME_TEXT_BLOCKS);
-        text_block.attr('rows', original.attr('rows'));
-        text_block.attr('placeholder', original.attr('placeholder'));
-        this.add_in_queue(text_block);
-
-        $(app_settings.POST_CONTENT_BLOCKS).append(this.get_hr());
-        $(app_settings.POST_CONTENT_BLOCKS).append(text_block);
+    static get_block_id(data) {
+        return data['block_id'];
     };
 
-    create_bootstrap_alert(text) {
+    static create_labels(block_id, block_type, save_button = true) {
+        let first_label = $('<span class="label label-info margin-bottom-10">Type: ' + block_type + '</span>');
+        let second_label = $('<span class="label label-pill label-danger margin-bottom-10 remove-block">remove</span>');
+        PostConstructor.add_block_id(second_label, block_id);
+
+        let wrapper = $("<div></div>");
+        wrapper.append(first_label);
+        wrapper.append(second_label);
+
+        if (save_button) {
+            let third_label = $('<span class="label label-success margin-bottom-10 save-block">save changes</span>');
+            PostConstructor.add_block_id(third_label, block_id);
+            wrapper.append(third_label);
+        }
+
+        return wrapper;
+    };
+
+    static create_bootstrap_alert(text) {
         let info_block = $("<div class='alert alert-info' title='Notice!' style='margin-top: 10px'></div>");
         let second_info_block = $("<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>×</button>");
         let third_info_block = $("<strong>Notice:</strong><span> " + text + "</span>");
@@ -258,12 +287,11 @@ class PostConstructor {
         return info_block;
     };
 
-    get_hr() {
-        return $("<hr>")
+    static create_hr() {
+        return $("<hr>");
     };
 
-    add_in_queue(block) {
-        block.attr('order', this.BLOCK_ITER);
-        this.BLOCK_ITER++;
+    static delete_block(data) {
+        $("div[block_id=" + PostConstructor.get_block_id(data) + "]").remove();
     };
 }

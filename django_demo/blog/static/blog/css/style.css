@@ -105,6 +105,14 @@ button {
     margin: 50px 0;
 }
 
+.remove-block {
+    cursor: pointer;
+}
+
+.save-block {
+    cursor: pointer;
+}
+
 .main-color {
     color: #1abc9c;
 }
