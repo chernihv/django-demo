@@ -12,13 +12,13 @@ class Feedback(models.Model):
     is_read = models.BooleanField(default=False)
     user_ip = models.CharField(max_length=50)
 
-    @staticmethod
-    def get_valid_questions():
-        return Feedback.objects.filter(is_read=False)
+    @classmethod
+    def get_valid_questions(cls):
+        return cls.objects.filter(is_read=False)
 
-    @staticmethod
-    def hide_question(q_id: int):
-        question = Feedback.objects.get(pk=q_id)
+    @classmethod
+    def hide_question(cls, q_id: int):
+        question = cls.objects.get(pk=q_id)
         question.is_read = True
         question.save()
 
@@ -31,22 +31,22 @@ class Post(models.Model):
     is_removed = models.BooleanField(default=False)
     is_published = models.BooleanField(default=True)
 
-    @staticmethod
-    def get_post_or_create(user_id: int):
+    @classmethod
+    def get_post_or_create(cls, user_id: int):
         try:
-            post = Post.objects.get(user_id=user_id, is_published=False, is_removed=False)
-        except Post.DoesNotExist:
-            post = Post(user_id=user_id, is_published=False, created_at=timezone.now())
+            post = cls.objects.get(user_id=user_id, is_published=False, is_removed=False)
+        except cls.DoesNotExist:
+            post = cls(user_id=user_id, is_published=False, created_at=timezone.now())
             post.save()
         return post
 
-    @staticmethod
-    def get_all_active_posts():
-        return Post.objects.filter(is_removed=False, is_published=True).order_by('-created_at')
+    @classmethod
+    def get_all_active_posts(cls):
+        return cls.objects.filter(is_removed=False, is_published=True).order_by('-created_at')
 
-    @staticmethod
-    def get_post_or_404(post_id: int):
-        return get_object_or_404(Post, pk=post_id, is_removed=False)
+    @classmethod
+    def get_post_or_404(cls, post_id: int):
+        return get_object_or_404(cls, pk=post_id, is_removed=False)
 
     def get_valid_comments(self):
         return PostComment.get_valid_comments(self.id)
